@@ -1,9 +1,15 @@
+"""entertainment_center.py:
+
+Just creates a few instances of movie and then calls
+fresh_tomatoes.open_movies_page(movies)
+"""
+
 import media
 import fresh_tomatoes
 
-#create several instances of movies that will be displayed
-
 #__init__(self, title, poster_art, trailer_link, lead_star, director):
+
+#create several instances of movies that will be displayed
 Interstellar = media.Movie("Interstellar",
 							"http://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Interstellar_film_poster.jpg/220px-Interstellar_film_poster.jpg",
 							"https://www.youtube.com/watch?v=zSWdZVtXT7E",
@@ -22,14 +28,8 @@ Avengers_Ultron = media.Movie("Avengers: Age of Ultron",
 								"Robert Downey Jr.",
 								"Joss Whedon")
 
-
+#Create a list that will be passed to formatter function
 movies = [Interstellar, Kingsman, Avengers_Ultron]
 
-
-#print movies[0].title, '\n', movies[0].trailer_youtube_url, '\n',
-#	movies[0].lead_star, '\n',movies[0].director
-
-#movies[0].show_trailer()
-
-
+#Call function that will create an .html file and open it
 fresh_tomatoes.open_movies_page(movies)
