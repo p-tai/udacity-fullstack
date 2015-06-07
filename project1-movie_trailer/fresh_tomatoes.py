@@ -1,3 +1,10 @@
+"""fresh_tomatoes.py:
+
+Contains the code required to create the html file, given a list of
+movies.
+Provided by Udacity course files.
+"""
+
 import webbrowser
 import os
 import re
