@@ -9,26 +9,24 @@ import media
 import fresh_tomatoes
 
 # This code will create several instances of movies that will be displayed.
+BASE_URL = "http://upload.wikimedia.org/wikipedia/en/thumb/"
 Interstellar = media.Movie(
 	"Interstellar",
-	"http://upload.wikimedia.org/wikipedia/en/thumb/b/bc/" + \
-	"Interstellar_film_poster.jpg/220px-Interstellar_film_poster.jpg",
+	BASE_URL + "b/bc/Interstellar_film_poster.jpg/220px-Interstellar_film_poster.jpg",
 	"https://www.youtube.com/watch?v=zSWdZVtXT7E",
 	"Matthew McConaughey",
 	"Christopher Nolan")
 							
 Kingsman = media.Movie(
 	"Kingsman: The Secret Service",
-	"http://upload.wikimedia.org/wikipedia/en/thumb/8/8b/" + \
-	"Kingsman_The_Secret_Service_poster.jpg/220px-Kingsman_The_Secret_Service_poster.jpg",
+	BASE_URL + "8/8b/Kingsman_The_Secret_Service_poster.jpg/220px-Kingsman_The_Secret_Service_poster.jpg",
 	"www.youtube.com/watch?v=xkX8jKeKUEA",
 	"Colin Firth",
 	"Matthew Vaughn")
 
 Avengers_Ultron = media.Movie(
 	"Avengers: Age of Ultron",
-	"http://upload.wikimedia.org/wikipedia/en/thumb/1/1b/" + \
-	"Avengers_Age_of_Ultron.jpg/220px-Avengers_Age_of_Ultron.jpg",
+	BASE_URL + "1/1b/Avengers_Age_of_Ultron.jpg/220px-Avengers_Age_of_Ultron.jpg",
 	"www.youtube.com/watch?v=JAUoeqvedMo",
 	"Robert Downey Jr.",
 	"Joss Whedon")
