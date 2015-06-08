@@ -1,0 +1,24 @@
+UDACITY-FULLSTACK-NANODEGREE
+PROJECT 2: TOURNAMENT DATABASE
+Author: Paul Tai
+
+Description:
+	This program assists in the recording and pairing of tournament
+	participants following a swiss-style tournament format.
+
+Project files:
+	tournament.py:
+	tournament.sql: SQL database and table definitions
+	tournament_test.py
+
+Usage steps:
+	*TO BE FINISHED*
+	git clone https://github.com/udacity/fullstack-nanodegree-vm.git
+	cd fullstack-nanodegree-vm
+	
+	git clone https://github.com/Tyrfang/udacity-fullstack.git
+	cd udacity-fullstack
+	
+	cd project2-movie_trailer
+	Copy the vagrant folder in this directory into the vagrant folder
+		provided by the Udacity course files.

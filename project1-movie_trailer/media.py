@@ -4,7 +4,7 @@ media.py:
 This file contains the Media, Movie, and Book class details.
 """
 
-#Globals to represent object type.
+# Globals to represent object type.
 MOVIE = "Movie"
 BOOK = "Book"
 
