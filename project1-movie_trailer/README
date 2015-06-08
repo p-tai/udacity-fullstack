@@ -4,6 +4,7 @@ informations and links related to several pre-selected movie titles.
 Usage steps:
 
 git clone https://github.com/Tyrfang/udacity-fullstack.git
+cd udacity-fullstack
 cd project1-movie_trailer
 ./python entertainment_center.py
 
