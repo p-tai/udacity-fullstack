@@ -1,8 +1,8 @@
-"""fresh_tomatoes.py:
+"""
+fresh_tomatoes.py:
 
-Contains the code required to create the html file, given a list of
-movies.
-Provided by Udacity course files.
+Contains the code required to create an html file, given a list of movies.
+Provided by Udacity Nanodegree/course files.
 """
 
 import webbrowser
