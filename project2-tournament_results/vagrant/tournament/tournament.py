@@ -107,7 +107,7 @@ def playerStandings():
     # Get all the IDs of players in the database.
     command = "SELECT " +\
                 "Players.P_Id, Players.name, " + \
-                "SUM(Matches.GameResult) as Wins, " + \
+                "SUM(CAST(Matches.WonGame as INT)) as Wins, " + \
                 "Count(Matches.P_Id_1) as Matches " + \
               "FROM Players " + \
               "LEFT JOIN Matches " + \
@@ -151,12 +151,12 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
     # Insert the match into the database, in both pair orders.
-    command1 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult, Draw)" + \
-              " VALUES (%s, %s, 1, 0);"
+    command1 = "INSERT INTO Matches (P_Id_1, P_Id_2, WonGame, Draw)" + \
+              " VALUES (%s, %s, '1', '0');"
     params1 =  (winner, loser)
     
-    command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult, Draw)" + \
-              " VALUES (%s, %s, 0, 0);"
+    command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, WonGame, Draw)" + \
+              " VALUES (%s, %s, '0', '0');"
     params2 = (loser, winner)
     
     # Run the commands and check for duplicates: Rematches not permitted
