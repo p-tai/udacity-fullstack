@@ -160,8 +160,14 @@ def reportMatch(winner, loser):
     command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult)" + \
               " VALUES (%s, %s, 2);"
     params2 = (loser, winner)
-    runCommand(command1, params = params1)
-    runCommand(command2, params = params2)
+    
+    # Run the commands and check for duplicates: Rematches not permitted
+    try: 
+        runCommand(command1, params = params1)
+        runCommand(command2, params = params2)
+    except psycopg2.IntegrityError as err:
+        error_str = "Error: Duplicate entry for players: (%s %s)." % (winner, loser)
+        print(error_str)
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
