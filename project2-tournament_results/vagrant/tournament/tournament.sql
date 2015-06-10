@@ -18,6 +18,7 @@ CREATE TABLE Players(
 	PRIMARY KEY(P_Id)
 );
 
+--Unused in tournament.py
 CREATE TABLE Tournaments(
 	T_Id SERIAL,
 	T_Name varchar(255),
@@ -27,18 +28,21 @@ CREATE TABLE Tournaments(
 CREATE TABLE Matches(
 	P_Id_1 int NOT NULL,
 	P_Id_2 int NOT NULL,
-	GameResult int, --0=draw, 1= player_id1, 2=player_id2
-	PRIMARY KEY(P_Id_1, P_Id_2), --no rematches
+	GameResult int, -- 1= player_id1 won, 0=player_id2 or draw
+	Draw int, --0 = not draw, 1 = draw
+	PRIMARY KEY(P_Id_1, P_Id_2),
 	FOREIGN KEY(P_Id_1) REFERENCES Players,
 	FOREIGN KEY(P_Id_2) REFERENCES Players
 );
 
+--Unused in tournament.py
 CREATE TABLE Matches_Multi_Tournament(
 	P_Id_1 int NOT NULL,
 	P_Id_2 int NOT NULL,
 	T_Id int NOT NULL,
-	GameResult int, --0=draw, 1= player_id1, 2=player_id2
-	PRIMARY KEY(P_Id_1, P_Id_2, T_Id), --no rematches
+	GameResult int, -- 1= player_id1 won, 0=player_id2 or draw
+	Draw int, --0 = not draw, 1 = draw
+	PRIMARY KEY(P_Id_1, P_Id_2, T_Id),
 	FOREIGN KEY(P_Id_1) REFERENCES Players,
 	FOREIGN KEY(P_Id_2) REFERENCES Players,
 	FOREIGN KEY(T_Id) REFERENCES Tournaments

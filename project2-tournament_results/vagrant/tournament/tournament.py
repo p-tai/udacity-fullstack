@@ -207,7 +207,5 @@ def swissPairings():
                         player_2[0], player_2[1]))
         i += 2
     
-    print pairings
-    
     return pairings
 
