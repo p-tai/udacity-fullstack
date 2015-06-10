@@ -4,6 +4,7 @@
 #
 
 import psycopg2
+from random import randrange
 
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
@@ -81,8 +82,8 @@ def registerPlayer(name):
         temp = ""
         for char in name:
             if char == "'":
-                temp+="'"
-            temp+=char
+                temp += "'"
+            temp += char
         name = temp
     
     command = "INSERT INTO Players (name) VALUES (%s);"
@@ -104,8 +105,15 @@ def playerStandings():
     """
     
     # Get all the IDs of players in the database.
-    command = "SELECT P_Id, name " + \
-              "FROM Players;"
+    command = "SELECT " +\
+                "Players.P_Id, Players.name, " + \
+                "SUM(Matches.GameResult) as Wins, " + \
+                "Count(Matches.P_Id_1) as Matches " + \
+              "FROM Players " + \
+              "LEFT JOIN Matches " + \
+                "ON Players.P_Id = Matches.P_Id_1 " + \
+              "GROUP BY Players.P_Id " + \
+              "ORDER BY Wins DESC;"
     result = runCommand(command)
     
     # In case the table was empty, check for a result before returning.
@@ -115,32 +123,21 @@ def playerStandings():
     # Create a placeholder for the resulting list.
     players = []
     
-    # Iterate through all the players in the database.
+    # Iterate through all the players and check the values.
     for player in result:
         
-        # Get the number of wins for this player.
-        command = "SELECT COUNT(P_id_1) " + \
-                  "FROM Matches " + \
-                  "WHERE P_id_1 = " + \
-                   str(player[0]) + " AND GameResult = 1;"
-        wins = runCommand(command)
+        # Unpack the result row,
+        P_id, name, wins, matches = player
+        
+        # Reformat the values for wins/matches if None for consistency.
         if wins == None:
-            pass
-        wins = wins[0][0]
-        
-        # Get the total number of matches for this player.
-        command = "SELECT COUNT(P_id_1) " + \
-                  "FROM Matches " + \
-                  "WHERE P_id_1 = " + \
-                   str(player[0]) + ";"
-        matches = runCommand(command)
+            wins = 0
         if matches == None:
-            pass
-        matches = matches[0][0]
+            matches = 0
         
-        # Create the tuple for this player (id, name, wins, matches).
-        players.append((player[0],player[1],wins,matches))
-        
+        # Add this player to the result.
+        players.append((P_id, name, wins, matches))
+
     return players
         
             
@@ -154,20 +151,21 @@ def reportMatch(winner, loser):
       loser:  the id number of the player who lost
     """
     # Insert the match into the database, in both pair orders.
-    command1 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult)" + \
-              " VALUES (%s, %s, 1);"
+    command1 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult, Draw)" + \
+              " VALUES (%s, %s, 1, 0);"
     params1 =  (winner, loser)
-    command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult)" + \
-              " VALUES (%s, %s, 2);"
+    
+    command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult, Draw)" + \
+              " VALUES (%s, %s, 0, 0);"
     params2 = (loser, winner)
     
     # Run the commands and check for duplicates: Rematches not permitted
     try: 
         runCommand(command1, params = params1)
         runCommand(command2, params = params2)
-    except psycopg2.IntegrityError as err:
-        error_str = "Error: Duplicate entry for players: (%s %s)." % (winner, loser)
-        print(error_str)
+    except psycopg2.IntegrityError:
+        err = "Error: Duplicate entry for players: (%s %s)." % (winner, loser)
+        print(err)
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
@@ -184,6 +182,32 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    # Get the ranks of all the players, ordered by win count.
     standings = playerStandings()
     
+    # List to store the resulting pairings.
+    pairings = []
+    
+    # Check for an odd number of players.
+    if(len(standings) % 2 != 0):
+        # Randomly take one of the players out to get a bye
+        extra = standings.pop(randrange(len(standings)))
+        
+        # Unpack and repack the id and name.
+        extra = (extra[0], extra[1])
+        pairings.append((extra, "BYE"))
+    
+    # Iterate through the remaining players, matching players together.
+    i = 0
+    while i < len(standings)-1:
+        # Unpack and repack the id and name.
+        player_1 = standings[i]
+        player_2 = standings[i+1]
+        pairings.append((player_1[0], player_1[1], \
+                        player_2[0], player_2[1]))
+        i += 2
+    
+    print pairings
+    
+    return pairings
 
