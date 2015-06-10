@@ -9,8 +9,13 @@ def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     return psycopg2.connect("dbname=tournament")
 
-def runCommand(command):
-    """Runs the given query command.  Returns the results, if any."""
+def runCommand(command, params = None):
+    """Runs the given query command.  Returns the results, if any.
+    
+    Args:
+      command:  the operation that will be executed
+      params:  the variables needed for the operation to run
+    """
     # Connect to the database.
     connection = connect()
     
@@ -18,7 +23,10 @@ def runCommand(command):
     cursor = connection.cursor()
     
     # Execute the given command and check if there are any results.
-    cursor.execute(command)
+    if params:        
+        cursor.execute(command, tuple(_ for _ in params))
+    else:
+        cursor.execute(command)
     result = None
     try:
         result = cursor.fetchall()
@@ -32,9 +40,8 @@ def runCommand(command):
     cursor.close()
     connection.close()
     
-    # Return the results, if they exist.
-    if result:
-        return result
+    # Return the operation's results, if there were any.
+    return result
 
 def deleteMatches():
     """Remove all the match records from the database."""
@@ -77,9 +84,9 @@ def registerPlayer(name):
                 temp+="'"
             temp+=char
         name = temp
-        
-    command = "INSERT INTO Players (name) VALUES ('%s');" % (name)
-    runCommand(command)
+    
+    command = "INSERT INTO Players (name) VALUES (%s);"
+    runCommand(command, params = (name,))
 
 
 def playerStandings():
@@ -97,7 +104,8 @@ def playerStandings():
     """
     
     # Get all the IDs of players in the database.
-    command = "SELECT P_Id, name FROM Players;"
+    command = "SELECT P_Id, name " + \
+              "FROM Players;"
     result = runCommand(command)
     
     # In case the table was empty, check for a result before returning.
@@ -110,20 +118,29 @@ def playerStandings():
     # Iterate through all the players in the database.
     for player in result:
         
-        # Get the number of wins
-        command = "SELECT COUNT(P_id_1) FROM Matches WHERE P_id_1 = " + \
+        # Get the number of wins for this player.
+        command = "SELECT COUNT(P_id_1) " + \
+                  "FROM Matches " + \
+                  "WHERE P_id_1 = " + \
                    str(player[0]) + " AND GameResult = 1;"
         wins = runCommand(command)
         if wins == None:
             pass
         wins = wins[0][0]
-        command = "SELECT COUNT(P_id_1) FROM Matches WHERE P_id_1 = " + \
-                   str(player[0])
+        
+        # Get the total number of matches for this player.
+        command = "SELECT COUNT(P_id_1) " + \
+                  "FROM Matches " + \
+                  "WHERE P_id_1 = " + \
+                   str(player[0]) + ";"
         matches = runCommand(command)
         if matches == None:
             pass
         matches = matches[0][0]
+        
+        # Create the tuple for this player (id, name, wins, matches).
         players.append((player[0],player[1],wins,matches))
+        
     return players
         
             
@@ -136,12 +153,15 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    command1 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult) VALUES " +\
-              "(%s, %s, 1);" % (winner, loser)
-    runCommand(command1)
-    command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult) VALUES " +\
-              "(%s, %s, 2);" % (loser, winner)
-    runCommand(command2)
+    # Insert the match into the database, in both pair orders.
+    command1 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult)" + \
+              " VALUES (%s, %s, 1);"
+    params1 =  (winner, loser)
+    command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult)" + \
+              " VALUES (%s, %s, 2);"
+    params2 = (loser, winner)
+    runCommand(command1, params = params1)
+    runCommand(command2, params = params2)
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
@@ -158,5 +178,6 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-
+    standings = playerStandings()
+    
 
