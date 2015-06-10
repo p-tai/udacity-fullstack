@@ -5,23 +5,59 @@
 
 import psycopg2
 
-
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     return psycopg2.connect("dbname=tournament")
 
+def runCommand(command):
+    """Runs the given query command.  Returns the results, if any."""
+    # Connect to the database.
+    connection = connect()
+    
+    # Open cursor to perform operations.
+    cursor = connection.cursor()
+    
+    # Execute the given command and check if there are any results.
+    cursor.execute(command)
+    result = None
+    try:
+        result = cursor.fetchall()
+    except psycopg2.ProgrammingError:
+        pass
+        
+    # Make any changes permanent.
+    connection.commit()
+    
+    # Cleanup the cursor and connection.
+    cursor.close()
+    connection.close()
+    
+    # Return the results, if they exist.
+    if result:
+        return result
 
 def deleteMatches():
     """Remove all the match records from the database."""
+    command = "DELETE FROM Matches;"
+    runCommand(command)
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
+    command = "DELETE FROM Players;"
+    runCommand(command)
 
 
 def countPlayers():
     """Returns the number of players currently registered."""
-
+    command = "SELECT COUNT(P_Id) FROM Players;"
+    result = runCommand(command)
+    
+    # In case the table was empty, check for a result before returning.
+    if result:
+        return result[0][0]
+    else:
+        return 0
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
@@ -32,6 +68,18 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+    
+    # If there are any ' characters, re-format the name for the query.
+    if "'" in name:
+        temp = ""
+        for char in name:
+            if char == "'":
+                temp+="'"
+            temp+=char
+        name = temp
+        
+    command = "INSERT INTO Players (name) VALUES ('%s');" % (name)
+    runCommand(command)
 
 
 def playerStandings():
@@ -47,6 +95,38 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    
+    # Get all the IDs of players in the database.
+    command = "SELECT P_Id, name FROM Players;"
+    result = runCommand(command)
+    
+    # In case the table was empty, check for a result before returning.
+    if result == None:
+        return None
+        
+    # Create a placeholder for the resulting list.
+    players = []
+    
+    # Iterate through all the players in the database.
+    for player in result:
+        
+        # Get the number of wins
+        command = "SELECT COUNT(P_id_1) FROM Matches WHERE P_id_1 = " + \
+                   str(player[0]) + " AND GameResult = 1;"
+        wins = runCommand(command)
+        if wins == None:
+            pass
+        wins = wins[0][0]
+        command = "SELECT COUNT(P_id_1) FROM Matches WHERE P_id_1 = " + \
+                   str(player[0])
+        matches = runCommand(command)
+        if matches == None:
+            pass
+        matches = matches[0][0]
+        players.append((player[0],player[1],wins,matches))
+    return players
+        
+            
 
 
 def reportMatch(winner, loser):
@@ -56,7 +136,12 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
- 
+    command1 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult) VALUES " +\
+              "(%s, %s, 1);" % (winner, loser)
+    runCommand(command1)
+    command2 = "INSERT INTO Matches (P_Id_1, P_Id_2, GameResult) VALUES " +\
+              "(%s, %s, 2);" % (loser, winner)
+    runCommand(command2)
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
