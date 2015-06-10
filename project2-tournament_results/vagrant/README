@@ -7,9 +7,8 @@ Description:
 	participants following a swiss-style tournament format.
 
 Project files:
-	tournament.py:
+	tournament.py: API for using the underlying Tournaments database.
 	tournament.sql: SQL database and table definitions
-	tournament_test.py
 
 Usage steps:
 	If not installed, install Vagrant and VirtualBox.
