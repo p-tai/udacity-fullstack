@@ -12,13 +12,36 @@ Project files:
 	tournament_test.py
 
 Usage steps:
-	*TO BE FINISHED*
+	If not installed, install Vagrant and VirtualBox.
+	
+	Clone the git repo containing project files.
+	git clone https://github.com/Tyrfang/udacity-fullstack.git
+	
+	Clone the git repo containing vagrant setup and files
 	git clone https://github.com/udacity/fullstack-nanodegree-vm.git
 	cd fullstack-nanodegree-vm
 	
-	git clone https://github.com/Tyrfang/udacity-fullstack.git
-	cd udacity-fullstack
+	Copy the vagrant folder in this directory into the vagrant folder provided by the Udacity course files.
+	cp -f udacity-fullstack/project2-tournament_results/vagrant/tournament/* fullstack-nanodegree-vm/vagrant/tournament
 	
-	cd project2-movie_trailer
-	Copy the vagrant folder in this directory into the vagrant folder
-		provided by the Udacity course files.
+	Navigate to the fullstack-nanodegree-vm/vagrant directory.
+	cd fullstack-nanodegree-vm/vagrant/
+	
+	Run vagrant.
+	vagrant up
+	
+	Connect to vagrant.
+	vagrant ssh
+	
+	Navigate to the sync directory, and then the tournament directory
+	cd /vagrant
+	cd tournament
+	
+	Run PSQL to setup the initial database.
+	psql
+		\i tournament.sql
+		\q
+	
+	
+	Execute any code that requires the given API.
+	
