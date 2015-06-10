@@ -33,12 +33,12 @@ Usage steps:
 	Clone the git repo containing vagrant setup and files
 		git clone https://github.com/udacity/fullstack-nanodegree-vm.git
 	
+	Copy the vagrant folder in this directory into the vagrant folder provided by the Udacity course files
+		cp -rf ./udacity-fullstack/project2-tournament_results/vagrant/ fullstack-nanodegree-vm/
+	
 	Navigate to the fullstack-nanodegree-vm/vagrant/
 		cd fullstack-nanodegree-vm/vagrant
-	
-	Copy the vagrant folder in this directory into the vagrant folder provided by the Udacity course files
-		cp -f ../udacity-fullstack/project2-tournament_results/vagrant/tournament/* fullstack-nanodegree-vm/vagrant/tournament
-	
+		
 	Start up the viritual machine using Vagrant
 		vagrant up
 	
