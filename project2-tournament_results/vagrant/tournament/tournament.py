@@ -58,7 +58,7 @@ def deletePlayers():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    command = "SELECT COUNT(P_Id) FROM Players;"
+    command = "SELECT * FROM PlayerCount;"
     result = runCommand(command)
     
     # In case the table was empty, check for a result before returning.
@@ -105,8 +105,9 @@ def playerStandings():
     """
     
     # Get all the IDs of players in the database.
-    command = "SELECT " +\
-                "Players.P_Id, Players.name, " + \
+    command = "SELECT " + \
+                "Players.P_Id, " + \
+                "Players.name, " + \
                 "SUM(CAST(Matches.WonGame as INT)) as Wins, " + \
                 "Count(Matches.P_Id_1) as Matches " + \
               "FROM Players " + \

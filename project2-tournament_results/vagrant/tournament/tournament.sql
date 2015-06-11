@@ -40,3 +40,8 @@ CREATE TABLE Matches_Multi_Tournament(
 	FOREIGN KEY(P_Id_2) REFERENCES Players,
 	FOREIGN KEY(T_Id) REFERENCES Tournaments
 );
+
+CREATE VIEW PlayerCount AS 
+	SELECT COUNT(Players.P_Id) 
+	FROM Players;
+	
