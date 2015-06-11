@@ -1,6 +1,5 @@
 UDACITY-FULLSTACK-NANODEGREE
-PROJECT 1
-MOVIE TRAILER WEBSITE
+PROJECT 1: MOVIE TRAILER WEBSITE
 Author: Paul Tai
 
 This program will create an .html file that will include
