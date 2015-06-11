@@ -16,13 +16,10 @@ Project files:
 		deleteMatches()
 		playerStandings()
 		swissPairings()
-			Note: Byes implemented, but the same player may receive
-			multiple byes.
+			Note: Byes implemented, but the same player may receive multiple byes.
 	tournament.sql: SQL database and table definitions
-		Tables for multi-tournament database have been created, but
+		Draws and multi-tournament database have fields and tables, but
 		the corresponding API to use them have not been implemented.
-		Draws have also been implemented, but 
-		
 
 Usage steps:
 	If not installed, install Vagrant and VirtualBox.
