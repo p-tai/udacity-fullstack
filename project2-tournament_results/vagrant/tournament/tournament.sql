@@ -1,5 +1,7 @@
 -- Table definitions for the tournament project.
 
+-- drop database if it already exists
+drop database if exists tournament;
 
 CREATE DATABASE tournament;
 
@@ -21,8 +23,8 @@ CREATE TABLE Tournaments(
 CREATE TABLE Matches(
 	P_Id_1 int NOT NULL,
 	P_Id_2 int NOT NULL,
-	WonGame bit, -- 1 = player_id1 won, 0=player_id1 did not win
-	Draw bit, -- 1 = draw, 0 = not draw
+	WonGame bit, -- 1: player_id1 won; 0: player_id1 did not win
+	Draw bit, -- 1: draw; 0: not draw
 	PRIMARY KEY(P_Id_1, P_Id_2),
 	FOREIGN KEY(P_Id_1) REFERENCES Players,
 	FOREIGN KEY(P_Id_2) REFERENCES Players
@@ -33,8 +35,8 @@ CREATE TABLE Matches_Multi_Tournament(
 	P_Id_1 int NOT NULL,
 	P_Id_2 int NOT NULL,
 	T_Id int NOT NULL,
-	WonGame bit, -- 1 = player_id1 won, 0=player_id1 did not win
-	Draw bit, -- 1 = draw, 0 = not draw
+	WonGame bit, -- 1: player_id1 won; 0: player_id1 did not win
+	Draw bit, -- 1: draw; 0: not draw
 	PRIMARY KEY(P_Id_1, P_Id_2, T_Id),
 	FOREIGN KEY(P_Id_1) REFERENCES Players,
 	FOREIGN KEY(P_Id_2) REFERENCES Players,
@@ -44,4 +46,3 @@ CREATE TABLE Matches_Multi_Tournament(
 CREATE VIEW PlayerCount AS 
 	SELECT COUNT(Players.P_Id) 
 	FROM Players;
-	
