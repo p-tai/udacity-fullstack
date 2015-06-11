@@ -15,11 +15,18 @@ def connect():
     Returns a database connection and command cursor.
     """
     # Connect to the tournament database.
-    connection = psycopg2.connect("dbname=tournament")
+    try:
+        connection = psycopg2.connect("dbname=tournament")
+    except:
+        print("Error attempting to connect to tournament database.")
+        return
 
     # Open cursor to perform operations.
-    cursor = connection.cursor()
-    return cursor, connection
+    try:
+        cursor = connection.cursor()
+        return cursor, connection
+    except:
+        print("Error attempting to create command cursor.")
 
 
 def runCommand(command, params=None):
