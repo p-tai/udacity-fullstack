@@ -11,7 +11,8 @@ from random import randrange
 
 
 def connect():
-    """Connect to the PostgreSQL database.
+    """Connect to the PostgreSQL database named 'tournament'.
+
     Returns a database connection and command cursor.
     """
     # Connect to the tournament database.
@@ -21,7 +22,7 @@ def connect():
         print("Error attempting to connect to tournament database.")
         return
 
-    # Open cursor to perform operations.
+    # Open cursor which will be used to execute commands.
     try:
         cursor = connection.cursor()
         return cursor, connection
@@ -34,16 +35,18 @@ def runCommand(command, params=None):
 
     Args:
       command:  the operation that will be executed
-      params:  the variables needed for the operation to run
+      params:  iterable containing variables needed for the operation
     """
     # Connect to the database.
     cursor, connection = connect()
 
-    # Execute the given command and check if there are any results.
+    # Execute the given command, using the paramaters if given.
     if params:
         cursor.execute(command, tuple(_ for _ in params))
     else:
         cursor.execute(command)
+
+    # Check if there are any results.
     result = None
     try:
         result = cursor.fetchall()
@@ -57,7 +60,7 @@ def runCommand(command, params=None):
     cursor.close()
     connection.close()
 
-    # Return the operation's results, if there were any.
+    # Return the operation's results.
     return result
 
 
@@ -122,7 +125,7 @@ def playerStandings():
         matches: the number of matches the player has played
     """
 
-    # Get all the IDs of players in the database.
+    # Get all the IDs and names of players in the database.
     command = "SELECT " + \
               "Players.P_Id, " + \
               "Players.name, " + \
@@ -176,7 +179,7 @@ def reportMatch(winner, loser):
                " VALUES (%s, %s, '0', '0');"
     params2 = (loser, winner)
 
-    # Run the commands and check for duplicates: Rematches not permitted
+    # Run commands and check for duplicates; rematches are not permitted.
     try:
         runCommand(command1, params=params1)
         runCommand(command2, params=params2)
@@ -208,12 +211,11 @@ def swissPairings():
 
     # Check for an odd number of players.
     if(len(standings) % 2 != 0):
-        # Randomly take one of the players out to get a bye
+        # Randomly pick a player to receive a Bye round.
         extra = standings.pop(randrange(len(standings)))
 
         # Unpack and repack the id and name.
-        extra = (extra[0], extra[1])
-        pairings.append((extra, "BYE"))
+        pairings.append(extra[0], extra[1], -1, "BYE")
 
     # Unpack and repack the id and name.
     player_1_ids, player_1_names, _, _ = zip(*standings[::2])
