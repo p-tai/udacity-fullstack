@@ -8,19 +8,86 @@ app = Flask(__name__)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from catalog_db_setup import Base, Cuisine, FoodItem
+from catalog_db_setup import Base, Cuisine, Dishes, Users
 
-engine = create_engine('sqlite://cookbook.db')
+engine = create_engine('sqlite:///cookbook.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+@app.route('/login/')
+def userLogin():
+	"""TODO"""
+	pass
+
+@app.route('/createuser/')
+def createUser():
+	"""TODO"""
 
 @app.route('/')
 @app.route('/hello')
 def HelloWorld():
 	return "Hello World"
+
+@app.route('/cuisine/<int:cuisine_id>/')
+def cuisineDishes(cuisine_id):
+    cuisine = session.query(Cuisine).filter_by(id=cuisine_id).one()
+    if not cuisine:
+		return None
+	dishes = session.query(FoodItem).filter_by(cuisine_id=restaurant.id)
+    for i in dishes:
+        output += i.name
+        output += '</br>'
+        output += i.price
+        output += '</br>'
+        output += i.description
+        output += '</br>'
+        output += '</br>'
+    return output
+
+
+@app.route('/cuisine/new/')
+def newCuisine():
+    return "page to create a new cuisine type"
+
+
+@app.route('/cuisine/<int:cuisine_id>/delete')
+def deleteMenuItem(restaurant_id, menu_id):
+	cuisine = session.query(Cuisine).filter_by(id=cuisine_id).one()
+    if not cuisine:
+		return None
+    return "page to delete a cuisine type"
+
+
+@app.route('/cuisine/<int:cuisine_id>/new')
+def newCuisine(cuisine_id):
+	cuisine = session.query(Cuisine).filter_by(id=cuisine_id).one()
+    if not cuisine:
+		return None
+    return "page to create a new dish type"
+
+
+@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/edit')
+def editDish(cuisine_id, dish_id):
+	cuisine = session.query(Cuisine).filter_by(id=cuisine_id).one()
+    if not cuisine:
+		return None
+	dishes = session.query(FoodItem).filter_by(cuisine_id=restaurant.id)
+	if not dishes:
+		return None
+    return "page to edit a dish"
+
+
+@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/delete')
+def deleteMenuItem(cuisine_id, dish_id):
+	cuisine = session.query(Cuisine).filter_by(id=cuisine_id).one()
+    if not cuisine:
+		return None
+	dishes = session.query(FoodItem).filter_by(cuisine_id=restaurant.id)
+	if not dishes:
+		return None
+    return "page to delete a menu item. Task 3 complete!"
 
 
 if __name__ == "__main__":
