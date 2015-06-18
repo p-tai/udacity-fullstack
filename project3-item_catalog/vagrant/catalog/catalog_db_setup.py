@@ -32,10 +32,10 @@ class Dishes(Base):
 class Users(Base):
     __tablename__ = "users" 
     
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
+    email = Column(String(100)), primary_key=True)
     sha256_password = Column(String(256), nullable=False)
-    email = Column(String(100))
+    salt = Column(String(16))
+
 
 engine = create_engine('sqlite:///cookbook.db')
 Base.metadata.create_all(engine)
