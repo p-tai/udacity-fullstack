@@ -32,7 +32,7 @@ class Dishes(Base):
 class Users(Base):
     __tablename__ = "users" 
     
-    email = Column(String(100)), primary_key=True)
+    email = Column(String(100), primary_key=True)
     sha256_password = Column(String(256), nullable=False)
     salt = Column(String(16))
 
