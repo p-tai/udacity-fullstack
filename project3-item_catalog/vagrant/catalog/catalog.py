@@ -2,7 +2,7 @@
 Main python file that performs url routing and get/post responses.
 """
 
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, flash
 
 app = Flask(__name__)
 
@@ -21,7 +21,7 @@ from os import urandom
 import hashlib
 
 @app.route('/login/')
-def userLogin(username, password):
+def userLogin():
     """
     This function deals with user login.
     """
@@ -46,10 +46,10 @@ def userLogin(username, password):
             return #redirect(url_for('myAccount', user=username)
         else:
             #password does not match
-            return #render_template('login.html', bad_account=True)
+            return render_template('loginform.html', bad_account=True)
     elif request.method == 'GET':
         # If a GET request, just render a login form.
-        return render_template('login.html', bad_account=False)
+        return render_template('loginform.html', bad_account=False)
     return render_template('error.html')
 
 @app.route('/createuser/')
@@ -98,6 +98,7 @@ def Index():
     return render_template('index.html')
 
 @app.route('/cuisine/new/')
+@app.route('/cuisine/new/<string:name>')
 def newCuisine():
     """
     Handles inserting a new cuisine type into the database.
@@ -105,6 +106,8 @@ def newCuisine():
     # Check if the HTTP request given is a POST or GET request.
     if request.method == 'POST':
         # If a POST request, extract the form data.
+        name = request.form('name')
+        flash(u'Cuisine added.')
         # TODO
         return 
     elif request.method == 'GET':
@@ -258,4 +261,3 @@ def viewDish(cuisine_id, dish_id):
 if __name__ == "__main__":
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
-
