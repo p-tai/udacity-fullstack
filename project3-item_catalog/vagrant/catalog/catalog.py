@@ -2,7 +2,7 @@
 Main python file that performs url routing and get/post responses.
 """
 
-from flask import Flask, render_template, url_for, request, flash
+from flask import Flask, render_template, url_for, request, flash, Session
 
 app = Flask(__name__)
 
@@ -20,7 +20,7 @@ from os import urandom
 
 import hashlib
 
-@app.route('/login/')
+@app.route('/login/', methods=['GET','POST'])
 def userLogin():
     """
     This function deals with user login.
@@ -47,12 +47,11 @@ def userLogin():
         else:
             #password does not match
             return render_template('loginform.html', bad_account=True)
-    elif request.method == 'GET':
+    else:
         # If a GET request, just render a login form.
         return render_template('loginform.html', bad_account=False)
-    return render_template('error.html')
 
-@app.route('/createuser/')
+@app.route('/createuser/', methods=['GET','POST'])
 def createUser():
     """
     This function deals with the creation of new accounts.
@@ -83,10 +82,9 @@ def createUser():
         session.commit()
         # Render the account page for this user.
         return redirect(url_for('myAccount', user=email))
-    elif request.method == 'GET':
+    else:
         # If GET request, render a new user form.
         return render_template('newuser.html')
-    return render_template('error.html')
 
 @app.route('/')
 @app.route('/hello')
@@ -97,23 +95,26 @@ def Index():
     """
     return render_template('index.html')
 
-@app.route('/cuisine/new/')
-@app.route('/cuisine/new/<string:name>')
+@app.route('/cuisine/new/', methods=['GET','POST'])
+# @app.route('/cuisine/new/<string:name>')
 def newCuisine():
     """
     Handles inserting a new cuisine type into the database.
     """
     # Check if the HTTP request given is a POST or GET request.
+    print(request.method)
     if request.method == 'POST':
         # If a POST request, extract the form data.
-        name = request.form('name')
-        flash(u'Cuisine added.')
-        # TODO
-        return 
-    elif request.method == 'GET':
+        _name = request.form['name']
+        flash(u'\"%s\" cuisine added.' % name)
+        # Create a new Cuisine tuple and add it to the Database.
+        newCuisine = Cuisine(name=_name)
+        session.add(newCuisine)
+        session.commit()
+        return render_template("testform.html")
+    else:
         # If a GET request, just render a login form.
-        return render_template("formcuisine.html")
-    return render_template("error.html")
+        return render_template("testform.html")
 
 
 @app.route('/cuisine/<int:cuisine_id>/view')
@@ -172,7 +173,7 @@ def newDish(cuisine_id):
         
 
 
-@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/edit')
+@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/edit', methods=['GET','POST'])
 def editDish(cuisine_id, dish_id):
     """
     Edit the details of a dish in the database.
@@ -260,4 +261,8 @@ def viewDish(cuisine_id, dish_id):
 
 if __name__ == "__main__":
     app.debug = True
+    app.config["SESSION_TYPE"] = "sqlalchemy"
+    app.config["SECRET_KEY"] = "a_Secret_Key"
+    
+    _flask_session = Session()
     app.run(host='0.0.0.0', port=5000)

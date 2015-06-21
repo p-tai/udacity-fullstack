@@ -25,35 +25,29 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     </head>
-    <body>
-	  <div class="col-md-offset-2 main">
-        <h1 class="page-header">Cuisine</h1>
-		<form class="form-horizontal">
-		<form action="" method=post>
-		<fieldset>
+<body>
+<h1> New Menu Item </h1>
+<!--MESSAGE FLASHING EXAMPLE -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
 
-		<!-- Form Name -->
-		<legend>Add a Cuisine</legend>
-
-		<!-- Text input-->
-		<div class="form-group">
-		<label class="col-md-4 control-label" for="name">
-		<form method="post" action="{{ url_for('newCuisine') }}">
+<ul>
+{% for message in messages %}
+  <li><strong>{{message}}</strong></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+<form action="{{ url_for('newCuisine') }}" method='post' >
             <label for="name">Please enter the Cuisine Name:</label>
             <input type="text" name="name" placeholder="e.g. Chinese, Italian" required=""/>
-			<input type="submit" />
-        </form>
-		
-		  
-		  
+			<input type="submit", value='Add Cuisine' />
+</form>
 
-		</div>
-    </div>
-    </fieldset>
-	<!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./dashboard_files/jquery.min.js"></script>
-    <script src="./dashboard_files/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="./dashboard_files/ie10-viewport-bug-workaround.js"></script>
+</body>
+</html>
+<!-- Bootstrap core JavaScript-->
+<script src="./dashboard_files/jquery.min.js"></script>
+<script src="./dashboard_files/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="./dashboard_files/ie10-viewport-bug-workaround.js"></script>
