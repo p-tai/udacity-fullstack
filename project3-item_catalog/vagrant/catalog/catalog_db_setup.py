@@ -34,7 +34,7 @@ class Users(Base):
     
     email = Column(String(100), primary_key=True)
     sha256_password = Column(String(256), nullable=False)
-    salt = Column(String(16))
+    salt = Column(String(20))
 
 
 engine = create_engine('sqlite:///cookbook.db')

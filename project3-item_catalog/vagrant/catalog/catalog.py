@@ -7,7 +7,9 @@ from flask import Flask, render_template, url_for, request, flash, Session
 app = Flask(__name__)
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from catalog_db_setup import Base, Cuisine, Dishes, Users
 
 engine = create_engine('sqlite:///cookbook.db')
@@ -17,6 +19,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 from os import urandom
+from base64 import b64encode
 
 import hashlib
 
@@ -59,32 +62,40 @@ def createUser():
     # Check if the HTTP request given is a POST or GET request.
     if request.method == 'POST':
         # If POST request, get the form data.
-        email = request.form['E-mail']
-        password = request.form['password']
+        _email = request.form['e-mail']
+        _email = _email.encode('utf-8')
+        _password = request.form['password']
+        _password = _password.encode('utf-8')
         # Check if given email is associated with an address.
-        user = session.query(User).filter_by(email=email)
+        user = session.query(Users).filter_by(email=_email)
         try: 
             user = user.one()
-            return render_template('newuser.html', uniqueName=False)
+            flash("A user with that e-mail address already exists.")
+            return render_template('testform.html')
         except NoResultFound, e:
             pass
+        except OperationalError, e:
+            pass
         # Get a salted hash of the password given.
-        salt = urandom(16)
-        hashed = hashlib.sha256(password+salt)
+        _salt = urandom(16)
+        _salt = b64encode(_salt)
+        hashed = hashlib.sha256(_password+_salt).hexdigest()
+        hashed = hashed.encode('UTF-8')
         # Create a new user and insert it into the database.
-        newUser = MenuItem(
-            id=id,
-            name=request.form['name'],
-            sha256_password=hashed,
-            salt=salt,
-            email=request.form['e-mail'])
+        newUser = Users(
+            email = _email,
+            sha256_password = hashed,
+            salt = _salt)
         session.add(newUser)
         session.commit()
+        print newUser.email, newUser.sha256_password, _password
         # Render the account page for this user.
-        return redirect(url_for('myAccount', user=email))
+        flash("User account successfully created.")
+        return render_template('createuser.html')
+        return #redirect(url_for('myAccount', user=email))
     else:
         # If GET request, render a new user form.
-        return render_template('newuser.html')
+        return render_template('createuser.html')
 
 @app.route('/')
 @app.route('/hello')
@@ -106,15 +117,15 @@ def newCuisine():
     if request.method == 'POST':
         # If a POST request, extract the form data.
         _name = request.form['name']
-        flash(u'\"%s\" cuisine added.' % name)
+        flash(u'\"%s\" cuisine added.' % _name)
         # Create a new Cuisine tuple and add it to the Database.
         newCuisine = Cuisine(name=_name)
         session.add(newCuisine)
         session.commit()
-        return render_template("testform.html")
+        return render_template("formcuisine.html")
     else:
         # If a GET request, just render a login form.
-        return render_template("testform.html")
+        return render_template("formcuisine.html")
 
 
 @app.route('/cuisine/<int:cuisine_id>/view')
