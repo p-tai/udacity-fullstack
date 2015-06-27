@@ -117,19 +117,26 @@ def newCuisine():
     if request.method == 'POST':
         # If a POST request, extract the form data.
         _name = request.form['name']
-        flash(u'\"%s\" cuisine added.' % _name)
+        cuisine = session.query(Cuisine).filter_by(name = _name.lower())
+        try: 
+            cuisine = cuisine.one()
+            flash(u'%s cuisine not added: Cuisine already exists' % _name)
+            return render_template("formcuisine.html", cu_id=cuisine.id)
+        except NoResultFound, e:
+            pass
+        flash(u'%s cuisine successfully added' % _name)
         # Create a new Cuisine tuple and add it to the Database.
-        newCuisine = Cuisine(name=_name)
+        newCuisine = Cuisine(name=_name.lower())
         session.add(newCuisine)
         session.commit()
-        return render_template("formcuisine.html")
+        return render_template("formcuisine.html", cu_id=newCuisine.id)
     else:
         # If a GET request, just render a login form.
         return render_template("formcuisine.html")
 
 
 @app.route('/cuisine/<int:cuisine_id>/view')
-def cuisineDishes(cuisine_id):
+def viewCuisine(cuisine_id):
     """
     Finds the associated cuisine_id and then rends a page
     with all of the dishes associated with it.
@@ -141,7 +148,7 @@ def cuisineDishes(cuisine_id):
     except NoResultFound, e:
         return render_template('notfound.html')
     # Get all the dishes associated with the id.
-    dishes = session.query(FoodItem).filter_by(cuisine_id=cuisine.id)
+    dishes = session.query(Dishes).filter_by(cuisine_id=cuisine.id)
     return render_template('viewcuisine.html', dishes=dishes)
 
 

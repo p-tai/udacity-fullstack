@@ -26,26 +26,29 @@
     <![endif]-->
     </head>
 <body>
-<h1> New Menu Item </h1>
+<h1> Login </h1>
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 
 <ul>
 {% for message in messages %}
-	{% if cu_id %}
-	<a href={{url_for('viewCuisine', cuisine_id=cu_id)}}>
-	{% endif %} 
-	<li><strong>{{message}} </strong></li> </a>
-	{% endfor %} 
+  <li><strong>{{message}}</strong></li>
+  {% endfor %}
 </ul>
 {% endif %}
 {% endwith %}
-
-<form action="{{ url_for('newCuisine') }}" method='post' >
-            <label for="name">Please enter the Cuisine Name:</label>
-            <input type="text" name="name" placeholder="e.g. Chinese, Italian" required=""/>
-			<input type="submit", value='Add Cuisine' />
+<form action="{{ url_for('createUser') }}" method='post' >
+            <label for="Form">User Details:</label> <br>
+            <label for="e-mail">E-mail:</label> 
+				<input type="email" name="e-mail" required=""/> <br>
+			<label for="password">Password:</label> 
+            <input type="password" name="password" required=""/> <br>
+			<input type="submit", value='' />
 </form>
+
+<form action="{{ url_for('createUser') }}" method='post' >
+	<label for="newUser">Create New Account</label> <br>
+	<input type="submit" name="newUser"/>
 
 </body>
 </html>
