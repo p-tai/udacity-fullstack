@@ -2,7 +2,8 @@
 Main python file that performs url routing and get/post responses.
 """
 
-from flask import Flask, render_template, url_for, request, flash, Session
+from flask import Flask, render_template, url_for,\
+                  request, flash, Session
 
 app = Flask(__name__)
 
@@ -33,6 +34,7 @@ def userLogin():
         # If a POST request, extract the form data.
         email = request.form['E-mail']
         password = request.form['password']
+
         # Search the db for the user based on e-mail address.
         user = session.query(User).filter_by(email=email)
         # Check if there was a result.
@@ -40,19 +42,36 @@ def userLogin():
             user = user.one()
         except NoResultFound, e:
             #username not found
-            return #render_template('login.html', bad_account=True)
+            flash("Error: E-mail/password combination not found. " +\
+                  "Please try again.")
+            return render_template('loginform.html', bad_account=True)
+
         # Compare hash of password+salt to stored hash value.
         hashed = hashlib.sha256(password+cuisine.salt)
         if cuisine.sha256_password == hashed:
-            #password matches
-            #login(username)
-            return #redirect(url_for('myAccount', user=username)
+
+            # Login user.
+            login_user(email)
+            flask.flash('Logged in successfully.')
+
+            next = flask.request.args.get('next')
+            if not next_is_valid(next):
+                return flask.abort(400)
+
+            return redirect(url_for('myAccount'))
         else:
-            #password does not match
-            return render_template('loginform.html', bad_account=True)
+            # Password doesn't match, render login-form.
+            flash("Error: E-mail/password combination not found. " +\
+                  "Please try again.")
+            return render_template('loginform.html')
     else:
         # If a GET request, just render a login form.
-        return render_template('loginform.html', bad_account=False)
+        return render_template('loginform.html')
+
+        
+@app.route("/logout")
+def userLogout():
+    return redirect(url_for(index))
 
 @app.route('/createuser/', methods=['GET','POST'])
 def createUser():
@@ -97,10 +116,13 @@ def createUser():
         # If GET request, render a new user form.
         return render_template('createuser.html')
 
+@app.route("/account")
+def viewAccount():
+    return render_template('account.html')
+
 @app.route('/')
-@app.route('/hello')
 @app.route('/index')
-def Index():
+def index():
     """
     Render a default landing page for these routes.
     """
@@ -135,21 +157,27 @@ def newCuisine():
         return render_template("formcuisine.html")
 
 
-@app.route('/cuisine/<int:cuisine_id>/view')
-def viewCuisine(cuisine_id):
+@app.route('/cuisine/<int:c_id>/view')
+def viewCuisine(c_id):
     """
     Finds the associated cuisine_id and then rends a page
     with all of the dishes associated with it.
     """
     # Search for the cuisine-id.
-    cuisine = session.query(Cuisine).filter_by(id=cuisine_id)
+    cuisine = session.query(Cuisine).filter_by(id=c_id)
     try: 
         cuisine = cuisine.one()
     except NoResultFound, e:
         return render_template('notfound.html')
     # Get all the dishes associated with the id.
-    dishes = session.query(Dishes).filter_by(cuisine_id=cuisine.id)
-    return render_template('viewcuisine.html', dishes=dishes)
+    dishes = session.query(Dishes).filter_by(cuisine_id=c_id)
+    try:
+        dishes = dishes.all()
+    except NoResultFound, e:
+        dishes=None
+    return render_template('viewcuisine.html', 
+                            dishes=dishes, 
+                            cuisine=cuisine)
 
 
 @app.route('/cuisine/<int:cuisine_id>/delete')
@@ -167,7 +195,7 @@ def deleteCuisine(restaurant_id, menu_id):
     except NoResultFound, e:
         return render_template('error.html')
 
-
+# TO DO
 @app.route('/cuisine/<int:cuisine_id>/new')
 def newDish(cuisine_id):
     """
@@ -187,10 +215,10 @@ def newDish(cuisine_id):
         return 
     elif request.method == 'GET':
         # If a GET request, just render a form.
-        return render_template('formdish.html', cuisine_id=cuisine_id)
+        return render_template('dishform.html', cuisine_id=cuisine_id)
         
 
-
+# TO DO
 @app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/edit', methods=['GET','POST'])
 def editDish(cuisine_id, dish_id):
     """
@@ -221,7 +249,7 @@ def editDish(cuisine_id, dish_id):
     else:
         return render_template("error.html")
 
-
+# TO DO
 @app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/delete')
 def deleteDish(cuisine_id, dish_id):
     """
@@ -251,7 +279,7 @@ def deleteDish(cuisine_id, dish_id):
     else:
         return render_template("error.html")
 
-
+# TO DO
 @app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/view')
 def viewDish(cuisine_id, dish_id):
     """
@@ -281,6 +309,5 @@ if __name__ == "__main__":
     app.debug = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
     app.config["SECRET_KEY"] = "a_Secret_Key"
-    
     _flask_session = Session()
     app.run(host='0.0.0.0', port=5000)

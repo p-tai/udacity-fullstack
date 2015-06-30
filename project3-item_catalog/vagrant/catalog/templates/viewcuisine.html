@@ -1,0 +1,23 @@
+<html>
+
+<body>
+<div>
+	
+	{% if not messages %}
+	
+		<p>No {{cuisine.name}} dishes found.</p>
+	
+	{% endif %}
+
+	{% for d in dishes %}
+
+	<p>{{d.cuisine.name}}: {{d.name}}</p>
+
+	<p>{{d.description}}</p>
+
+</div>
+
+{% endfor %}
+</body>
+
+</html>
