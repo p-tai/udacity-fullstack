@@ -26,25 +26,37 @@
     <![endif]-->
     </head>
 <body>
-<h1> Create a New User Account </h1>
+<h2 class="text-center"> Create a New User Account </h2>
+
 {% with messages = get_flashed_messages() %}
 {% if messages %}
-
-<ul>
-{% for message in messages %}
-  <li><strong>{{message}}</strong></li>
-  {% endfor %}
-</ul>
+	<p>
+		<ul>
+			{% for message in messages %}
+			<li><strong>{{message}}</strong></li>
+			{% endfor %}
+		</ul>
+	</p>
 {% endif %}
 {% endwith %}
+<div class="container">
 <form action="{{ url_for('createUser') }}" method='post' >
-            <label for="Form">User Details:</label> <br>
+	<div class='row'>
+		<label for="Form">User Details:</label>
+    </div>
+    <div class='row'>
             <label for="e-mail">E-mail:</label> 
-				<input type="email" name="e-mail" required=""/> <br>
-			<label for="password">Password:</label> 
-            <input type="password" name="password" required=""/> <br>
-			<input type="submit", value='Create Account' />
+            <input type="email" name="e-mail" required=""/> <br>
+    </div>
+    <div class='row'>
+		<label for="password">Password:</label> 
+        <input type="password" name="password" required=""/> <br>
+    </div>
+    <div class='row'>
+		<input class='btn-primary' type="submit", value='Create Account' />
+	</div>
 </form>
+</div>
 
 </body>
 </html>
