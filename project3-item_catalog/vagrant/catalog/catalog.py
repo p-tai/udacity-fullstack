@@ -24,6 +24,11 @@ from base64 import b64encode
 
 import hashlib
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 @app.route('/login/', methods=['GET','POST'])
 def userLogin():
     """
@@ -90,7 +95,7 @@ def createUser():
         try: 
             user = user.one()
             flash("A user with that e-mail address already exists.")
-            return render_template('testform.html')
+            return render_template('createuser.html')
         except NoResultFound, e:
             pass
         except OperationalError, e:
@@ -207,7 +212,7 @@ def newDish(c_id):
         cuisine = cuisine.one()
     except NoResultFound, e:
         # No entry matching the cuisine-id found, render an error page.
-        return render_template('error.html')
+        abort(404)
     # If found, check the HTTP request type.
     if request.method == 'POST':
         # If a POST request, extract the form data.
@@ -230,10 +235,10 @@ def editDish(cuisine_id, dish_id):
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
         if _dish.cuisine.id != cuisine_id:
-            return render_template('error.html')
+            abort(404)
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
-        return render_template('error.html')
+        abort(404)
     
     # If found, check the HTTP request type.
     if request.method == 'POST':
@@ -247,7 +252,7 @@ def editDish(cuisine_id, dish_id):
             cuisine_id=cuisine_id,
             dish=_dish)
     else:
-        return render_template("error.html")
+        abort(404)
 
 # TO DO
 @app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/delete')
@@ -260,10 +265,10 @@ def deleteDish(cuisine_id, dish_id):
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
         if _dish.cuisine.id != cuisine_id:
-            return render_template("error.html")
+            abort(404)
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
-        return render_template("error.html")
+        abort(404)
     
     # If found, check the HTTP request type.
     if request.method == 'POST':
@@ -277,7 +282,7 @@ def deleteDish(cuisine_id, dish_id):
             cuisine_id=cuisine_id,
             dish=_dish)
     else:
-        return render_template("error.html")
+        abort(404)
 
 # TO DO
 @app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/view')
@@ -290,10 +295,10 @@ def viewDish(cuisine_id, dish_id):
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
         if _dish.cuisine.id != cuisine_id:
-            return render_template("error.html")
+            abort(404)
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
-        return render_template("error.html")
+        abort(404)
     
     # If found, check the HTTP request type.
     if request.method == 'GET':
@@ -302,7 +307,7 @@ def viewDish(cuisine_id, dish_id):
             cuisine_id=cuisine_id,
             dish=_dish)
     else:
-        return render_template("error.html")
+        abort(404)
 
 @app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/view/JSON')
 def viewDishJSON(cuisine_id, dish_id):
@@ -311,10 +316,10 @@ def viewDishJSON(cuisine_id, dish_id):
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
         if _dish.cuisine.id != cuisine_id:
-            return jsonify ({})
+            return jsonify ([{}])
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
-        return render_template("error.html")
+        abort(404)
     return jsonify(dish=[_dish.serialize])
 
 
