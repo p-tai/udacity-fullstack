@@ -211,9 +211,9 @@ def newDish(c_id):
     Add a new dish to the database, associated with a cuisine-id.
     """
     # Search the database for the cuisine-id.
-    cuisine = session.query(Cuisine).filter_by(id=cuisine_id)
+    _cuisine = session.query(Cuisine).filter_by(id=c_id)
     try: 
-        cuisine = cuisine.one()
+        _cuisine = _cuisine.one()
     except NoResultFound, e:
         # No entry matching the cuisine-id found, render an error page.
         abort(404)
@@ -224,7 +224,7 @@ def newDish(c_id):
         return 
     elif request.method == 'GET':
         # If a GET request, just render a form.
-        return render_template('dishform.html', cuisine_id=cuisine_id)
+        return render_template('dishform.html', cuisine_id=c_id)
         
 
 # TO DO

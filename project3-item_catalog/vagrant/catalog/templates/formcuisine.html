@@ -35,7 +35,7 @@
 <ul>
 {% for message in messages %}
 	{% if cu_id %}
-	<a href={{url_for('viewCuisine', cuisine_id=cu_id)}}>
+	<a href={{url_for('viewCuisine', c_id=cu_id)}}>
 	{% endif %} 
 	<li><strong>{{message}} </strong></li> </a>
 	{% endfor %} 
@@ -62,6 +62,6 @@
 </html>
 <!-- Bootstrap core JavaScript-->
 <script src="./dashboard_files/jquery.min.js"></script>
-<script src="./dashboard_files/bootstrap.min.js"></script>
+<script src="./dashboard_files/bootstrap.min.js"</script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="./dashboard_files/ie10-viewport-bug-workaround.js"></script>

@@ -9,7 +9,11 @@
 	{% for d in dishes %}
 		<p>{{d.cuisine.name}} {{d.name}}</p>
 		<p>{{d.description}}</p>
+		<p><a href={{url_for('editDish', cuisine_id=d.cuisine_id, dish_id=d.id)}} class="btn btn-primary btn-sm"> Edit </a></p>
+		<p><a href={{url_for('deleteDish', cuisine_id=d.cuisine_id, dish_id=d.id)}} class="btn btn-danger btn-sm"> Delete </a></p>
 	{% endfor %}
+	
+	<p><a href={{url_for('newDish', c_id=cuisine.id)}} class="btn btn-primary btn-sm"> Add a Dish </p>
 </div>
 </body>
 
