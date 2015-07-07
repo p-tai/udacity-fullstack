@@ -2,7 +2,7 @@
 Main python file that performs url routing and get/post responses.
 """
 
-from flask import Flask, render_template, url_for, request\
+from flask import Flask, render_template, url_for, request,\
                   flash, Session, jsonify, abort
 
 app = Flask(__name__)
