@@ -2,8 +2,8 @@
 Main python file that performs url routing and get/post responses.
 """
 
-from flask import Flask, render_template, url_for,\
-                  request, flash, Session, jsonify
+from flask import Flask, render_template, url_for, request\
+                  flash, Session, jsonify, abort
 
 app = Flask(__name__)
 
@@ -28,6 +28,7 @@ import hashlib
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 @app.route('/login/', methods=['GET','POST'])
 def userLogin():
@@ -73,10 +74,11 @@ def userLogin():
         # If a GET request, just render a login form.
         return render_template('loginform.html')
 
-        
+# TO DO
 @app.route("/logout")
 def userLogout():
     return redirect(url_for(index))
+
 
 @app.route('/createuser/', methods=['GET','POST'])
 def createUser():
@@ -121,9 +123,11 @@ def createUser():
         # If GET request, render a new user form.
         return render_template('createuser.html')
 
+
 @app.route("/account")
 def viewAccount():
     return render_template('account.html')
+
 
 @app.route('/')
 @app.route('/index')
@@ -133,8 +137,8 @@ def index():
     """
     return render_template('index.html')
 
+
 @app.route('/cuisine/new/', methods=['GET','POST'])
-# @app.route('/cuisine/new/<string:name>')
 def newCuisine():
     """
     Handles inserting a new cuisine type into the database.
@@ -173,7 +177,7 @@ def viewCuisine(c_id):
     try: 
         cuisine = cuisine.one()
     except NoResultFound, e:
-        return render_template('notfound.html')
+        abort(404)
     # Get all the dishes associated with the id.
     dishes = session.query(Dishes).filter_by(cuisine_id=c_id)
     try:
@@ -197,7 +201,7 @@ def deleteCuisine(c_id):
         session.delete(cuisine)
         session.commit()
     except NoResultFound, e:
-        return render_template('cuisinedelete.html', cuisine=None)
+        abort(404)
     return render_template('cuisinedelete.html', cuisine=cuisine.name)
 
 # TO DO

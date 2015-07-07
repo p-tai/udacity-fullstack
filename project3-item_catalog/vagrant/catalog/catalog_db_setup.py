@@ -28,15 +28,18 @@ class Dishes(Base):
     description = Column(String(250))
     cuisine_id = Column(Integer, ForeignKey('cuisine.id'))
     cuisine = relationship(Cuisine)
+    owner_id = Column(String(100), ForeignKey('Users'))
+    owner = relationship(Users)
     
     @property
     def serialize(self):
 		# Returns object data in serializable format
 		return {
-			'name' : self.name,
 			'id' : self.id,
+			'name' : self.name,
 			'description' : self.description,
 			'cuisine' : self.cuisine
+			'owner' : self.owner_id
 		}
     
 
