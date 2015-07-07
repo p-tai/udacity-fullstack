@@ -8,6 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="http://getbootstrap.com/favicon.ico">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
     <title>Fullstack Project</title>
 
@@ -45,15 +46,25 @@
 		<label for="Form">User Details:</label>
     </div>
     <div class='row'>
-            <label for="e-mail">E-mail:</label> 
-            <input type="email" name="e-mail" required=""/> <br>
+		<div class='col-xs-1'>
+        <label for="e-mail">E-mail: </label> 
+        </div>
+        <div class='col-xs-1'>
+        <input type="email" name="e-mail" required=""/> <br>
+        </div>
     </div>
     <div class='row'>
-		<label for="password">Password:</label> 
+		<div class='col-xs-1'>
+		<label for="password">Password: </label> 
+		</div>
+		<div class='col-xs-1'>
         <input type="password" name="password" required=""/> <br>
+        </div>
     </div>
     <div class='row'>
-		<input class='btn-primary' type="submit", value='Create Account' />
+		<div class='col-xs-1'>
+		<button class='btn btn-primary'> <i class='fa fa-user-plus'></i>  Create Account </button>
+		</div>
 	</div>
 </form>
 </div>

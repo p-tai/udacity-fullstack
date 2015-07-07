@@ -3,7 +3,7 @@ Main python file that performs url routing and get/post responses.
 """
 
 from flask import Flask, render_template, url_for,\
-                  request, flash, Session
+                  request, flash, Session, jsonify
 
 app = Flask(__name__)
 
@@ -180,24 +180,24 @@ def viewCuisine(c_id):
                             cuisine=cuisine)
 
 
-@app.route('/cuisine/<int:cuisine_id>/delete')
-def deleteCuisine(restaurant_id, menu_id):
+@app.route('/cuisine/<int:c_id>/delete')
+def deleteCuisine(c_id):
     """
     Deletes a cuisine associated with the cuisine-id.
     """
     # Search for the cuisine-id.
-    cuisine = session.query(Cuisine).filter_by(id=cuisine_id)
+    cuisine = session.query(Cuisine).filter_by(id=c_id)
     try: 
         cuisine = cuisine.one()
-        # TODO: Confirmation
-        # TODO: Delete this id from database, CASCADE
-        return render_template('deletecuisine.html')
+        session.delete(cuisine)
+        session.commit()
     except NoResultFound, e:
-        return render_template('error.html')
+        return render_template('cuisinedelete.html', cuisine=None)
+    return render_template('cuisinedelete.html', cuisine=cuisine.name)
 
 # TO DO
-@app.route('/cuisine/<int:cuisine_id>/new')
-def newDish(cuisine_id):
+@app.route('/cuisine/<int:c_id>/new', methods=['GET','POST'])
+def newDish(c_id):
     """
     Add a new dish to the database, associated with a cuisine-id.
     """
@@ -303,6 +303,19 @@ def viewDish(cuisine_id, dish_id):
             dish=_dish)
     else:
         return render_template("error.html")
+
+@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/view/JSON')
+def viewDishJSON(cuisine_id, dish_id):
+    _dish = session.query(Dishes).filter_by(id=dish_id)
+    try: 
+        _dish = _dish.one()
+        # Also check that the cuisine-id is correct.
+        if _dish.cuisine.id != cuisine_id:
+            return jsonify ({})
+    except NoResultFound, e:
+        # No entry matching the dish-id found, render an error page.
+        return render_template("error.html")
+    return jsonify(dish=[_dish.serialize])
 
 
 if __name__ == "__main__":
