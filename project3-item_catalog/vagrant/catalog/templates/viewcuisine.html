@@ -31,16 +31,16 @@
 <div class='container'>
 	{% if not dishes %}
 		<div class='row'>
-			No {{cuisine.name}} dishes found.
+			<h3>{{cuisine.name}} has no dishes yet.</h3>
 		</div>
 	{% endif %}
 	
 	{% for d in dishes %}
 		<div class='row'>
-			{{d.cuisine.name}}: {{d.name}}
+			<p>{{d.cuisine.name}}: {{d.name}}</p>
 		</div>
 		<div class='row'>
-			{{d.description}}
+			<p>{{d.description}}</p>
 		</div>
 		<div class='row'>
 			<div class='col-xs-1'>

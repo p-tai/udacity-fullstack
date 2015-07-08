@@ -162,14 +162,13 @@ def newCuisine():
         cuisine = session.query(Cuisine).filter_by(name = _name.lower())
         try: 
             cuisine = cuisine.one()
-            flash(u'\"%s\" not added.' % _name)
-            flash(u'Cuisine already exists')
+            flash(u'\"%s\" not added. Cuisine already exists.' % _name)
             return render_template("formcuisine.html", cu_id=cuisine.id)
         except NoResultFound, e:
             pass
-        flash(u'%s cuisine successfully added' % _name)
+        flash(u'%s cuisine successfully added.' % _name)
         # Create a new Cuisine tuple and add it to the Database.
-        newCuisine = Cuisine(name=_name.lower())
+        newCuisine = Cuisine(name=_name)
         session.add(newCuisine)
         session.commit()
         return render_template("formcuisine.html", cu_id=newCuisine.id)

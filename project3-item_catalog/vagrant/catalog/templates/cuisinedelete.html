@@ -30,7 +30,7 @@
 <div class="container">
     <div class="row">
 	{% if not cuisine %}
-		Cuisine not found.
+		<p>Cuisine not found.</p>
 	{% else %}
 		<form action="{{ url_for('deleteCuisine', c_id = cuisine.id) }}" method='post' >
 			<div class='row'>
