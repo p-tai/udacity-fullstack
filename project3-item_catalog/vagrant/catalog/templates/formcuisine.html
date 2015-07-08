@@ -30,23 +30,21 @@
 <h2 class='text-center'> New Menu Item </h2>
 <br>
 {% with messages = get_flashed_messages() %}
-{% if messages %}
-<p>
-<ul>
-{% for message in messages %}
-	{% if cu_id %}
-	<a href={{url_for('viewCuisine', c_id=cu_id)}}>
-	{% endif %} 
-	<li><strong>{{message}} </strong></li> </a>
-	{% endfor %} 
-</ul>
+{% if messages and cu_id%}
+<div class='container'>
+	<div class='row'>
+	<strong> {{messages[0]}} 
+	<a href={{url_for('viewCuisine', c_id=cu_id)}}> {{messages[1]}} </a> 
+	</strong>
+	</div>
+</div>
 </p>
 <br>
 {% endif %}
 {% endwith %}
 
 <div class='container'>
-<form action="{{ url_for('newCuisine') }}" method='post' >
+	<form action="{{ url_for('newCuisine') }}" method='post'>
 	<div class='row'>
 		<label for="name">Please enter the Cuisine Name: </label>
 	</div>
@@ -56,7 +54,7 @@
 			<button class='btn btn-primary btn-md'> <i class='fa fa-plus-square'></i>  Add Cuisine </button>
 		</div>
 	</div>
-</form>
+	</form>
 </div>
 </body>
 </html>

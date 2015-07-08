@@ -27,16 +27,34 @@
     </head>
 <body>
 
-<div>
-	<p>
+<div class="container">
+    <div class="row">
 	{% if not cuisine %}
-		<p>Cuisine not found.</p>
+		Cuisine not found.
 	{% else %}
-		<p>{{cuisine}} cuisine deleted.</p>
+		<form action="{{ url_for('deleteCuisine', c_id = cuisine.id) }}" method='post' >
+			<div class='row'>
+				<div class='col-xs-4'>
+					<label for="Form">Confirm Delete:</label>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='col-xs-4'>
+					Are you sure you want to delete {{cuisine.name}}?
+				</div>
+			</div>
+			<div class='row'>
+				<div class='col-xs-4'>
+					<button class='btn btn-danger btn-md'> <i class='fa fa-plus-trash-o'></i>  Delete Cuisine </button>
+				</div>
+		</form>
 	{% endif %}
-	</p>
+	</div>
 </div>
-
 </body>
-
 </html>
+<!-- Bootstrap core JavaScript-->
+<script src="./dashboard_files/jquery.min.js"></script>
+<script src="./dashboard_files/bootstrap.min.js"</script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="./dashboard_files/ie10-viewport-bug-workaround.js"></script>

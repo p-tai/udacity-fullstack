@@ -25,6 +25,16 @@ from base64 import b64encode
 import hashlib
 
 
+def correctCasing(str):
+    """
+    Forces given str to a standard Capitalization where
+    all the first letters of a word are capitalized.
+    """
+    strings = str.split(' ')
+    strings = [s[0].upper()+s[1:].lower() for s in strings]
+    return ' '.join(strings)
+        
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -148,10 +158,12 @@ def newCuisine():
     if request.method == 'POST':
         # If a POST request, extract the form data.
         _name = request.form['name']
+        _name = correctCasing(_name)
         cuisine = session.query(Cuisine).filter_by(name = _name.lower())
         try: 
             cuisine = cuisine.one()
-            flash(u'%s cuisine not added: Cuisine already exists' % _name)
+            flash(u'\"%s\" not added.' % _name)
+            flash(u'Cuisine already exists')
             return render_template("formcuisine.html", cu_id=cuisine.id)
         except NoResultFound, e:
             pass
@@ -189,20 +201,23 @@ def viewCuisine(c_id):
                             cuisine=cuisine)
 
 
-@app.route('/cuisine/<int:c_id>/delete')
+@app.route('/cuisine/<int:c_id>/delete', methods=['GET','POST'])
 def deleteCuisine(c_id):
     """
     Deletes a cuisine associated with the cuisine-id.
     """
     # Search for the cuisine-id.
-    cuisine = session.query(Cuisine).filter_by(id=c_id)
+    _cuisine = session.query(Cuisine).filter_by(id=c_id)
     try: 
-        cuisine = cuisine.one()
-        session.delete(cuisine)
-        session.commit()
+        _cuisine = _cuisine.one()
+        if request.method == 'POST':
+            session.delete(_cuisine)
+            session.commit()
+            flash(u'\"%s\" deleted.' % _cuisine.name)
+            return render_template('index.html')
     except NoResultFound, e:
         abort(404)
-    return render_template('cuisinedelete.html', cuisine=cuisine.name)
+    return render_template('cuisinedelete.html', cuisine=_cuisine)
 
 # TO DO
 @app.route('/cuisine/<int:c_id>/new', methods=['GET','POST'])
