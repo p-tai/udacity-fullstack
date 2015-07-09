@@ -166,11 +166,11 @@ def newCuisine():
             return render_template("formcuisine.html", cu_id=cuisine.id)
         except NoResultFound, e:
             pass
-        flash(u'%s cuisine successfully added.' % _name)
         # Create a new Cuisine tuple and add it to the Database.
         newCuisine = Cuisine(name=_name)
         session.add(newCuisine)
         session.commit()
+        flash(u'%s cuisine successfully added.' % _name)
         return render_template("formcuisine.html", cu_id=newCuisine.id)
     else:
         # If a GET request, just render a login form.
@@ -234,8 +234,29 @@ def newDish(c_id):
     # If found, check the HTTP request type.
     if request.method == 'POST':
         # If a POST request, extract the form data.
-        # TODO
-        return 
+        _name = request.form['name']
+        _name = correctCasing(_name)
+        _desc = request.form['description']
+        _dish = session.query(Dishes).filter_by(name=_name)
+        try: 
+            _dish = _dish.one()
+            # Dish already exists in database, do not add.
+            flash(u'%s has previously been submitted.' % _name)
+            return render_template('dishform.html', 
+                                    cuisine_id=c_id, 
+                                    dish_id=_dish.id)
+        except NoResultFound, e:
+            pass
+        newDish = Dishes(name=_name, 
+                        description=_desc, 
+                        cuisine=_cuisine,
+                        cuisine_id=_cuisine.id)
+        session.add(newDish)
+        session.commit()
+        flash(u'%s dish successfully added.' % _name)
+        return render_template('dishform.html', 
+                                cuisine_id=c_id, 
+                                dish_id=newDish.id)
     elif request.method == 'GET':
         # If a GET request, just render a form.
         return render_template('dishform.html', cuisine_id=c_id)
@@ -303,29 +324,24 @@ def deleteDish(cuisine_id, dish_id):
         abort(404)
 
 # TO DO
-@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/view')
-def viewDish(cuisine_id, dish_id):
+@app.route('/cuisine/<int:c_id>/<int:d_id>/view')
+def viewDish(c_id, d_id):
     """
     This function will deal with deleting a dish from the database.
     """
-    _dish = session.query(Dishes).filter_by(id=dish_id)
+    _dish = session.query(Dishes).filter_by(id=d_id)
     try: 
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
-        if _dish.cuisine.id != cuisine_id:
+        if _dish.cuisine_id != c_id:
+            print("no match")
             abort(404)
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
         abort(404)
     
     # If found, check the HTTP request type.
-    if request.method == 'GET':
-        return render_template(
-            "viewdish.html", 
-            cuisine_id=cuisine_id,
-            dish=_dish)
-    else:
-        abort(404)
+    return render_template("viewdish.html", cuisine_id=c_id, dish=_dish)
 
 @app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/view/JSON')
 def viewDishJSON(cuisine_id, dish_id):

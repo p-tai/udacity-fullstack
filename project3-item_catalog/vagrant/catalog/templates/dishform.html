@@ -27,17 +27,17 @@
     <![endif]-->
 	</head>
 <body>
-<h2 class='text-center'> Add New Cuisine </h2>
+<h2 class='text-center'> Add New Dish </h2>
 <br>
 {% with messages = get_flashed_messages() %}
-{% if messages and cu_id%}
+{% if messages and cuisine_id%}
 <div class='container'>
 	<div class='row'>
 		<strong> {{messages[0]}} </strong>
 	</div>
 	<div class='row'>
-		<a href={{url_for('viewCuisine', c_id=cu_id)}}> 
-			<button class='btn btn-primary btn-sm'> <i class='fa fa-external-link-square'></i>  View Cuisine </button>
+		<a href={{url_for('viewDish', c_id=cuisine_id, d_id=dish_id)}}> 
+			<button class='btn btn-primary btn-sm'> <i class='fa fa-external-link-square'></i>  View Dish </button>
 		</a> 
 	
 	</div>
@@ -48,14 +48,26 @@
 {% endwith %}
 
 <div class='container'>
-	<form action="{{ url_for('newCuisine') }}" method='post'>
+	<form action="{{ url_for('newDish', c_id=cuisine_id) }}" method='post'>
 	<div class='row'>
-		<label for="name">Please enter the Cuisine Name: </label>
+		<div class='col-xs-2'>
+			<label for="name">Dish Name: </label>
+		</div>
+		<div class='col-xs-4'>
+			<input class='form-control' type="text" name="name" required=""/>
+		</div>
 	</div>
 	<div class='row'>
+		<div class='col-xs-2'>
+			<label for="description">Dish Description: </label>
+		</div>
 		<div class='col-xs-4'>
-			<input type="text" name="name" placeholder=" e.g. Chinese, Italian " required=""/>
-			<button class='btn btn-primary btn-md'> <i class='fa fa-plus-square'></i>  Add Cuisine </button>
+			<input class='form-control' type="text" name="description" required=""/>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-xs-1'>
+			<button class='btn btn-primary btn-md'> <i class='fa fa-plus-square'></i>  Add Dish </button>
 		</div>
 	</div>
 	</form>
