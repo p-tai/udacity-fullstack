@@ -263,17 +263,17 @@ def newDish(c_id):
         
 
 
-@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/edit', methods=['GET','POST'])
-def editDish(cuisine_id, dish_id):
+@app.route('/cuisine/<int:c_id>/<int:d_id>/edit', methods=['GET','POST'])
+def editDish(c_id, d_id):
     """
     Edit the details of a dish in the database.
     """
     # Search the databae for the given dish.
-    _dish = session.query(Dishes).filter_by(id=dish_id)
+    _dish = session.query(Dishes).filter_by(id=d_id)
     try: 
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
-        if _dish.cuisine.id != cuisine_id:
+        if _dish.cuisine.id != c_id:
             abort(404)
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
@@ -312,8 +312,8 @@ def editDish(cuisine_id, dish_id):
                                 dish=_dish)
 
 
-@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/delete')
-def deleteDish(cuisine_id, dish_id):
+@app.route('/cuisine/<int:c_id>/<int:d_id>/delete')
+def deleteDish(c_id, d_id):
     """
     This function will deal with deleting a dish from the database.
     """
@@ -345,11 +345,11 @@ def viewDish(c_id, d_id):
     This function will deal with listing a dish's details.
     """
     # Search the databae for the given dish.
-    _dish = session.query(Dishes).filter_by(id=dish_id)
+    _dish = session.query(Dishes).filter_by(id=d_id)
     try: 
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
-        if _dish.cuisine.id != cuisine_id:
+        if _dish.cuisine.id != c_id:
             abort(404)
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
@@ -360,13 +360,13 @@ def viewDish(c_id, d_id):
     
     
 
-@app.route('/cuisine/<int:cuisine_id>/<int:dish_id>/view/JSON')
-def viewDishJSON(cuisine_id, dish_id):
-    _dish = session.query(Dishes).filter_by(id=dish_id)
+@app.route('/cuisine/<int:c_id>/<int:d_id>/view/JSON')
+def viewDishJSON(c_id, d_id):
+    _dish = session.query(Dishes).filter_by(id=d_id)
     try: 
         _dish = _dish.one()
         # Also check that the cuisine-id is correct.
-        if _dish.cuisine.id != cuisine_id:
+        if _dish.cuisine.id != c_id:
             return jsonify ([{}])
     except NoResultFound, e:
         # No entry matching the dish-id found, render an error page.
