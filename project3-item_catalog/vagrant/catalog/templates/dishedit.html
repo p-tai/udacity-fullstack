@@ -26,54 +26,56 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 	</head>
-
 <body>
+<h2 class='text-center'> 
+	Edit Dish Details
+</h2>
+<br>
+{% with messages = get_flashed_messages() %}
+{% if messages%}
 <div class='container'>
 	<div class='row'>
-		<h2>{{cuisine.name}} Dishes:</h2>
-	{% if not dishes %}
-		<div class='row'>
-			<h3>{{cuisine.name}} has no dishes yet.</h3>
-		</div>
-	{% endif %}
-	</div>
-	
-	<div class='row center-block'>
-		<div class='col-xs-4 center-block'>
-			<a href={{url_for('newDish', c_id=cuisine.id)}} 
-			class="btn btn-primary btn-lg"> <i class='fa fa-plus-square'></i> Add a Dish </a>
-		</div>
-		<div class='col-xs-4 center-block'>
-			<a href={{url_for('deleteCuisine', c_id=cuisine.id)}} 
-			class="btn btn-danger btn-lg"> <i class='fa fa-trash-o'></i> Delete this Cuisine </a>
+		<div class='col-xs-2'>
+			<strong> {{messages[0]}} </strong>
 		</div>
 	</div>
-	
-	<br>
-	{% for d in dishes %}
-		<div class='row'>
-			<div class='col-xs-2'>
-				<p>{{d.cuisine.name}}: {{d.name}}</p>
-			</div>
-			
+	<div class='row'>
+		<div class='col-xs-2'>
+			<a href={{url_for('viewDish', c_id=cuisine_id, d_id=dish.id)}}> 
+			<button class='btn btn-primary btn-sm'> <i class='fa fa-external-link-square'></i>  View Dish </button>
+			</a> 
 		</div>
-		<div class='row'>
-			<div class='col-xs-2'>
-				<p>{{d.description}}</p>
-			</div>
+	</div>
+</div>
+</p>
+<br>
+{% endif %}
+{% endwith %}
+
+<div class='container'>
+	<form action="{{ url_for('editDish', c_id=cuisine_id, d_id=dish.id) }}" method='post'>
+	<div class='row'>
+		<div class='col-xs-2'>
+			<label for="name">Dish Name: </label>
 		</div>
-		<div class='row'>
-			<div class='col-xs-1'>
-				<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
-				class="btn btn-info btn-sm"> <i class='fa fa-edit'></i> Edit </a>
-			</div>
-			<div class='col-xs-1'>
-				<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
-				class="btn btn-danger btn-sm"> <i class='fa fa-trash-o'></i> Delete </a>
-			</div>
+		<div class='col-xs-4'>
+			<input class='form-control' type="text" placeholder="{{ dish.name }}" name="name"/>
 		</div>
-	{% endfor %}
-	
+	</div>
+	<div class='row'>
+		<div class='col-xs-2'>
+			<label for="description">Dish Description: </label>
+		</div>
+		<div class='col-xs-4'>
+			<input class='form-control' type="text" placeholder="{{ dish.description }}" name="description"/>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-xs-1'>
+			<button class='btn btn-info btn-md'> <i class='fa fa-edit'></i>  Edit Dish </button>
+		</div>
+	</div>
+	</form>
 </div>
 </body>
 </html>

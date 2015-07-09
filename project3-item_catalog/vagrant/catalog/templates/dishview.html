@@ -29,51 +29,24 @@
 
 <body>
 <div class='container'>
-	<div class='row'>
-		<h2>{{cuisine.name}} Dishes:</h2>
-	{% if not dishes %}
+	{% with d = dish %}
 		<div class='row'>
-			<h3>{{cuisine.name}} has no dishes yet.</h3>
-		</div>
-	{% endif %}
-	</div>
-	
-	<div class='row center-block'>
-		<div class='col-xs-4 center-block'>
-			<a href={{url_for('newDish', c_id=cuisine.id)}} 
-			class="btn btn-primary btn-lg"> <i class='fa fa-plus-square'></i> Add a Dish </a>
-		</div>
-		<div class='col-xs-4 center-block'>
-			<a href={{url_for('deleteCuisine', c_id=cuisine.id)}} 
-			class="btn btn-danger btn-lg"> <i class='fa fa-trash-o'></i> Delete this Cuisine </a>
-		</div>
-	</div>
-	
-	<br>
-	{% for d in dishes %}
-		<div class='row'>
-			<div class='col-xs-2'>
-				<p>{{d.cuisine.name}}: {{d.name}}</p>
-			</div>
-			
+			<p>{{d.cuisine.name}}: {{d.name}}</p>
 		</div>
 		<div class='row'>
-			<div class='col-xs-2'>
-				<p>{{d.description}}</p>
-			</div>
+			<p>{{d.description}}</p>
 		</div>
 		<div class='row'>
 			<div class='col-xs-1'>
 				<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
-				class="btn btn-info btn-sm"> <i class='fa fa-edit'></i> Edit </a>
+				class="btn btn-primary btn-sm"> Edit </a>
 			</div>
 			<div class='col-xs-1'>
 				<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
-				class="btn btn-danger btn-sm"> <i class='fa fa-trash-o'></i> Delete </a>
+				class="btn btn-danger btn-sm"> Delete </a>
 			</div>
 		</div>
-	{% endfor %}
-	
+	{% endwith %}
 </div>
 </body>
 </html>

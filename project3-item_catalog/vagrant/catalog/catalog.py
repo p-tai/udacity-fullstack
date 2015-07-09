@@ -259,7 +259,8 @@ def newDish(c_id):
                                 dish_id=newDish.id)
     elif request.method == 'GET':
         # If a GET request, just render a form.
-        return render_template('dishform.html', cuisine_id=c_id)
+        return render_template('dishform.html', 
+                                cuisine_id=c_id)
         
 
 
@@ -281,34 +282,43 @@ def editDish(c_id, d_id):
     
     # If found, check the HTTP request type.
     if request.method == 'POST':
+        
         # If a POST request, extract the form data.
         _name = request.form['name']
-        _name = correctCasing(_name)
-        try: 
-            _dish = _dish.one()
-            # Dish already exists in database, do not add to db.
-            flash(u'%s already exists. Edit failed.' % _name)
-            return render_template('dishform.html', 
-                                    cuisine_id=c_id, 
-                                    dish_id=_dish.id)
-        except NoResultFound, e:
-            pass
+        _desc = request.form['description']
+        
+        # Check the name was changed
+        if(_name == ""):
+            _name = _dish.name
+        
+        else: 
+            # Make sure a dish with this name doesn't already exist.
+            _name = correctCasing(_name)
+            try: 
+                temp = _dish
+                _dish = session.query(Dishes).filter_by(name=_name).one()
+                # Dish already exists in database, do not add to db.
+                flash(u'%s already exists. Edit failed.' % _name)
+                return render_template('dishedit.html', 
+                                        cuisine_id=c_id, 
+                                        dish=temp)
+            except NoResultFound, e:
+                pass
         # Update the dish's details in the database.
         _dish.name = _name
-        _dish.desc = _desc
-        _desc = request.form['description']
-        session.add(_dish)
+        if(_desc != ""):
+            _dish.description = _desc
         session.commit()
         
         # Notify the front-end that the update was successful.
         flash(u'%s successfully updated.' % _name)
-        return render_template("disheditor.html", 
-                                cuisine_id=cuisine_id,
+        return render_template('dishedit.html', 
+                                cuisine_id=c_id,
                                 dish=_dish)
     else:
         # If a GET request, just render a blank form.
-        return render_template("disheditor.html", 
-                                cuisine_id=cuisine_id,
+        return render_template('dishedit.html', 
+                                cuisine_id=c_id,
                                 dish=_dish)
 
 
