@@ -45,7 +45,7 @@ class Dishes(Base):
 			'id' : self.id,
 			'name' : self.name,
 			'description' : self.description,
-			'cuisine' : self.cuisine,
+			'cuisine_id' : self.cuisine_id,
 			'owner' : self.owner_id
 		}
 

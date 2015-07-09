@@ -3,7 +3,7 @@ Main python file that performs url routing and get/post responses.
 """
 
 from flask import Flask, render_template, url_for, request,\
-                  flash, Session, jsonify, abort
+                  redirect, flash, Session, jsonify, abort
 
 app = Flask(__name__)
 
@@ -322,7 +322,7 @@ def editDish(c_id, d_id):
                                 dish=_dish)
 
 
-@app.route('/cuisine/<int:c_id>/<int:d_id>/delete')
+@app.route('/cuisine/<int:c_id>/<int:d_id>/delete', methods=['GET','POST'])
 def deleteDish(c_id, d_id):
     """
     This function will deal with deleting a dish from the database.
@@ -342,10 +342,12 @@ def deleteDish(c_id, d_id):
         session.delete(_dish)
         session.commit()
         flash(u'\"%s\" deleted.' % _dish.name)
-        return redirect(url_for(viewCuisine(),c_id=c_id))
+        return redirect(url_for('index'))
     else:
         # Get request results in a confirmation check.
-        return render_template('dishdelete.html', dish=_dish)
+        return render_template('dishdelete.html', 
+                                cuisine_id=_dish.cuisine_id,
+                                dish=_dish)
 
 
 @app.route('/cuisine/<int:c_id>/<int:d_id>/view')

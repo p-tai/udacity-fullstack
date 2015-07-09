@@ -35,14 +35,14 @@
 {% if messages and cuisine_id%}
 <div class='container'>
 	<div class='row'>
-		<div class='col-xs-2'>
+		<div class='col-xs-8'>
 			<strong> {{messages[0]}} </strong>
 		</div>
 	</div>
 	<div class='row'>
 		<div class='col-xs-2'>
 			<a href={{url_for('viewDish', c_id=cuisine_id, d_id=dish_id)}}> 
-			<button class='btn btn-primary btn-sm'> <i class='fa fa-external-link-square'></i>  View Dish </button>
+				<button class='btn btn-primary btn-sm'> <i class='fa fa-external-link-square'></i>  View Dish </button>
 			</a> 
 		</div>
 	</div>

@@ -33,12 +33,16 @@
 {% if messages and cu_id%}
 <div class='container'>
 	<div class='row'>
-		<strong> {{messages[0]}} </strong>
+		<div class='col-xs-8'>
+			<strong> {{messages[0]}} </strong>
+		</div
 	</div>
 	<div class='row'>
-		<a href={{url_for('viewCuisine', c_id=cu_id)}}> 
-			<button class='btn btn-primary btn-sm'> <i class='fa fa-external-link-square'></i>  View Cuisine </button>
-		</a> 
+		<div class='col-xs-2'>
+			<a href={{url_for('viewCuisine', c_id=cu_id)}}> 
+				<button class='btn btn-primary btn-sm'> <i class='fa fa-external-link-square'></i>  View Cuisine </button>
+			</a> 
+		</div>
 	
 	</div>
 </div>
