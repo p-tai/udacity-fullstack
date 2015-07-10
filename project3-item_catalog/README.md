@@ -1,6 +1,6 @@
-UDACITY-FULLSTACK-NANODEGREE
-PROJECT 3: ITEM CATALOG
-Author: Paul Tai
+UDACITY-FULLSTACK-NANODEGREE  
+PROJECT 3: ITEM CATALOG  
+Author: Paul Tai  
 
 Description:
 	This application that provides a list of items within a variety of categories
