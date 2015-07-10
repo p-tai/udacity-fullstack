@@ -6,20 +6,20 @@ Description:
 	This program assists in the recording and pairing of tournament
 	participants following a swiss-style tournament format.
 
-Project files:
-	tournament.py: API for using the underlying Tournaments database.
-		registerPlayer(name)
-		countPlayers()
-		deletePlayers()
-		reportMatch(winner, loser)
-			Note: Rematches are not allowed.
-		deleteMatches()
-		playerStandings()
-		swissPairings()
-			Note: Byes implemented, but the same player may receive multiple byes.
-	tournament.sql: SQL database and table definitions
-		Draws and multi-tournament database have fields and tables, but
-		the corresponding API to use them have not been implemented.
+Project files:  
+	tournament.py: API for using the underlying Tournaments database.  
+		- registerPlayer(name)  
+		- countPlayers()  
+		- deletePlayers()  
+		- reportMatch(winner, loser)  
+			Note: Rematches are not allowed.  
+		- deleteMatches()  
+		- playerStandings()  
+		- swissPairings()  
+			Note: Byes implemented, but the same player may receive multiple byes.  
+	tournament.sql: SQL database and table definitions  
+		- Draws and multi-tournament database have fields and tables, but  
+		-the corresponding API to use them have not been implemented.  
 
 Usage steps:
 	If not installed, install Vagrant and VirtualBox.
