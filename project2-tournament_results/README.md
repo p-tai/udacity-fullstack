@@ -21,7 +21,9 @@ Project files:
 		- Draws and multi-tournament database have fields and tables, but  
 		-the corresponding API to use them have not been implemented.  
 
-Usage steps:
+Usage steps:  
+
+	
 	If not installed, install Vagrant and VirtualBox.
 	
 	Clone the git repo containing project files.
