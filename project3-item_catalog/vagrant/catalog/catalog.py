@@ -13,7 +13,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from catalog_db_setup import Base, Cuisine, Dishes, Users
 
-engine = create_engine('sqlite:///cookbook.db')
+engine = create_engine('sqlite:///cuisines.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -23,7 +23,7 @@ from os import urandom
 from base64 import b64encode
 
 import hashlib
-
+import datetime
 
 def correctCasing(str):
     """
@@ -146,9 +146,11 @@ def index():
     Render a default landing page for these routes.
     """
     cuisineList = session.query(Cuisine).all()
+    recentDishes = session.query(Dishes).order_by(Dishes.creation_time).limit(5).all()
     
-    return "index"
-    #return render_template('index.html', cuisines = cuisineList)
+    return render_template('index.html',
+                            cuisines = cuisineList,
+                            dishes=recentDishes)
 
 
 @app.route('/cuisine/new/', methods=['GET','POST'])
@@ -311,6 +313,7 @@ def editDish(c_id, d_id):
         _dish.name = _name
         if(_desc != ""):
             _dish.description = _desc
+        _dish.edit_time=datetime.datetime.utcnow
         session.commit()
         
         # Notify the front-end that the update was successful.

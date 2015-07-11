@@ -1,0 +1,5 @@
+			{% for cuisine in cuisines %}
+				<li><a href="{{url_for('viewCuisine', c_id=cuisine.id)}}"> {{cuisine.name}} </a></li>
+			{% else %}
+				<li>No cuisines so far.</li>
+			{% endfor %}

@@ -5,7 +5,9 @@ Holds the table definitions for the item_catalog project.
 
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+import datetime
+from sqlalchemy import Column, ForeignKey,\
+						Integer, String, DateTime, Binary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -37,6 +39,9 @@ class Dishes(Base):
     cuisine_id = Column(Integer, ForeignKey('cuisine.id'))
     owner = relationship(Users)
     owner_id = Column(String(100), ForeignKey('users.email'))
+    creation_time = Column(DateTime, default=datetime.datetime.utcnow)
+    edit_time = Column(DateTime, default=datetime.datetime.utcnow)
+    image = Column(Binary)
     
     @property
     def serialize(self):
@@ -50,5 +55,5 @@ class Dishes(Base):
 		}
 
 
-engine = create_engine('sqlite:///cookbook.db')
+engine = create_engine('sqlite:///cuisines.db')
 Base.metadata.create_all(engine)
