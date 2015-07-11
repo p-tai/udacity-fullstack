@@ -145,7 +145,10 @@ def index():
     """
     Render a default landing page for these routes.
     """
-    return render_template('index.html')
+    cuisineList = session.query(Cuisine).all()
+    
+    return "index"
+    #return render_template('index.html', cuisines = cuisineList)
 
 
 @app.route('/cuisine/new/', methods=['GET','POST'])
@@ -159,7 +162,7 @@ def newCuisine():
         # If a POST request, extract the form data.
         _name = request.form['name']
         _name = correctCasing(_name)
-        cuisine = session.query(Cuisine).filter_by(name = _name.lower())
+        cuisine = session.query(Cuisine).filter_by(name = _name)
         try: 
             cuisine = cuisine.one()
             flash(u'\"%s\" not added. Cuisine already exists.' % _name)
@@ -213,7 +216,7 @@ def deleteCuisine(c_id):
             session.delete(_cuisine)
             session.commit()
             flash(u'\"%s\" deleted.' % _cuisine.name)
-            return render_template('index.html')
+            return redirect(url_for('index'))
     except NoResultFound, e:
         abort(404)
     return render_template('cuisinedelete.html', cuisine=_cuisine)
