@@ -255,7 +255,8 @@ def newDish(c_id):
         newDish = Dishes(name=_name, 
                         description=_desc, 
                         cuisine=_cuisine,
-                        cuisine_id=_cuisine.id)
+                        cuisine_id=_cuisine.id,
+                        creation_time = datetime.datetime.utcnow)
         session.add(newDish)
         session.commit()
         flash(u'%s dish successfully added.' % _name)
