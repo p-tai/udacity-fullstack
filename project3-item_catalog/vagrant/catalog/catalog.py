@@ -40,6 +40,7 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
+# TO DO
 @app.route('/login/', methods=['GET','POST'])
 def userLogin():
     """
@@ -47,39 +48,7 @@ def userLogin():
     """
     # Check if the HTTP request given is a POST or GET request.
     if request.method == 'POST':
-        # If a POST request, extract the form data.
-        email = request.form['E-mail']
-        password = request.form['password']
-
-        # Search the db for the user based on e-mail address.
-        user = session.query(User).filter_by(email=email)
-        # Check if there was a result.
-        try: 
-            user = user.one()
-        except NoResultFound, e:
-            #username not found
-            flash("Error: E-mail/password combination not found. " +\
-                  "Please try again.")
-            return render_template('loginform.html', bad_account=True)
-
-        # Compare hash of password+salt to stored hash value.
-        hashed = hashlib.sha256(password+cuisine.salt)
-        if cuisine.sha256_password == hashed:
-
-            # Login user.
-            login_user(email)
-            flask.flash('Logged in successfully.')
-
-            next = flask.request.args.get('next')
-            if not next_is_valid(next):
-                return flask.abort(400)
-
-            return redirect(url_for('myAccount'))
-        else:
-            # Password doesn't match, render login-form.
-            flash("Error: E-mail/password combination not found. " +\
-                  "Please try again.")
-            return render_template('loginform.html')
+        return render_template('loginform.html')
     else:
         # If a GET request, just render a login form.
         return render_template('loginform.html')
