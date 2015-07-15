@@ -3,11 +3,21 @@ Main python file that performs url routing and get/post responses.
 """
 
 from flask import Flask, render_template, url_for, request,\
-                  redirect, flash, jsonify, abort
-
+                  redirect, flash, jsonify, abort, make_response
 from flask import Session as login_session
 
 app = Flask(__name__)
+
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
+import httplib2
+import json
+import requests
+
+CLIENT_ID = json.loads(
+    open('client_secret.json', 'r').read())['web']['client_id']
+
+Base_API_URI = "https://www.googleapis.com/oauth2/v1/"
 
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
@@ -41,22 +51,99 @@ def correctCasing(str):
 def page_not_found(e):
     return render_template('404.html'), 404
 
+@app.route('/gconnect', methods=['POST'])
+def gconnect():
+    """
+    This function deals handling a Google OAuth2 response.
+    """
+    # Ensure that the state anti-forgery variable matches.
+    if request.args.get('state') != flask_session['state']:
+        response = make_response(
+                    json.dumps('Invalid state parameter'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
-# TO DO
-@app.route('/login/', methods=['GET','POST'])
+    # Upgrade the authorization code into a credentials object.
+    code = request.data
+    try:
+        oauth_flow = flow_from_clientsecrets('client_secret.json',
+                                            scope='')
+        oauth_flow.redirect_uri = 'postmessage'
+        credentials = oauth_flow.step2_exchange(code)
+    except FlowExchangeError:
+        response = make_response(json.dumps('Failed to upgrade '+\
+                    'the authorization code'), 401)
+        response.headers['Content-Type'] = 'applica tion/json'
+        return response
+
+    # Check that the returned access token is valid using Google's API.
+    access_token = credentials.access_token
+    url = Base_API_URI+('tokeninfo?access_token=%s'%access_token)
+    print(url)
+    h = httplib2.Http()
+    result = json.loads(h.request(url,'GET')[1])
+    print(result)
+
+    # If there is an error of some sort, return an error response code.
+    if result.get('error') is not None:
+        response = make_response(json.dumps('error'), 500)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    # Check the given gplus_id matches the current user id.
+    gplus_id = credentials.id_token['sub']
+    if result['user_id'] != gplus_id:
+        response = make_response(json.dumps("Token's user ID does not"+\
+                    "match given user ID."), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    # Check if the user is already logged in.
+    stored_credentials = flask_session.get('credentials')
+    stored_gplus_id = flask_session.get('gplus_id')
+    if stored_credentials is not None and stored_gplus_id == gplus_id:
+        response = make_response(json.dumps("Current user is already "+\
+                    "connected."), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    # Store the user details into the session.
+    flask_session['credentials'] = credentials
+    flask_session['gplus_id'] = gplus_id
+    
+    # Retreive user info from credentials object.
+    userinfo_url = Base_API_URI+"userinfo"
+    params = {'access_token' : credentials.access_token,
+              'alt' : 'json'}
+    answer = requests.get(userinfo_url, params=params)
+
+    data = answer.json()
+    
+    flask_session['username'] = data['name']
+    flask_session['picture'] = data['picture']
+    flask_session['email'] = data['email']
+
+    # TODO: Template for successful login.
+    output = ''
+    output += '<h1>Welcome, '
+    output += flask_session['username']
+    output += '!</h1>'
+    output += '<img src="'
+    output += flask_session['picture']
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    flash("you are now logged in as %s" % flask_session['username'])
+    return output
+
+
+@app.route('/login/')
 def userLogin():
     """
     This function deals with user login.
     """
     state = ''.join(b64encode(urandom(32)).decode('utf-8'))
-    _flask_session['state'] = state
-    return state
-    # Check if the HTTP request given is a POST or GET request.
-    if request.method == 'POST':
-        return render_template('loginform.html')
-    else:
-        # If a GET request, just render a login form.
-        return render_template('loginform.html')
+    flask_session['state'] = state
+
+    return render_template('login.html', STATE=state)
 
 # TO DO
 @app.route("/logout")
@@ -371,5 +458,5 @@ if __name__ == "__main__":
     app.debug = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
     app.config["SECRET_KEY"] = "a_Secret_Key"
-    _flask_session = login_session()
+    flask_session = login_session()
     app.run(host='0.0.0.0', port=5000)
