@@ -3,7 +3,9 @@ Main python file that performs url routing and get/post responses.
 """
 
 from flask import Flask, render_template, url_for, request,\
-                  redirect, flash, Session, jsonify, abort
+                  redirect, flash, jsonify, abort
+
+from flask import Session as login_session
 
 app = Flask(__name__)
 
@@ -46,6 +48,9 @@ def userLogin():
     """
     This function deals with user login.
     """
+    state = ''.join(b64encode(urandom(32)).decode('utf-8'))
+    _flask_session['state'] = state
+    return state
     # Check if the HTTP request given is a POST or GET request.
     if request.method == 'POST':
         return render_template('loginform.html')
@@ -366,5 +371,5 @@ if __name__ == "__main__":
     app.debug = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
     app.config["SECRET_KEY"] = "a_Secret_Key"
-    _flask_session = Session()
+    _flask_session = login_session()
     app.run(host='0.0.0.0', port=5000)
