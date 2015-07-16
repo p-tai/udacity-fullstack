@@ -17,7 +17,7 @@ import requests
 CLIENT_ID = json.loads(
     open('client_secret.json', 'r').read())['web']['client_id']
 
-Base_API_URI = "https://www.googleapis.com/oauth2/v1/"
+Base_GoogleAPI_URI = "https://www.googleapis.com/oauth2/v1/"
 
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
@@ -37,6 +37,7 @@ from base64 import b64encode
 import hashlib
 import datetime
 
+
 def correctCasing(str):
     """
     Forces given str to a standard Capitalization where
@@ -47,6 +48,14 @@ def correctCasing(str):
     return ' '.join(strings)
         
 
+def require_login(func):
+    def func_wrapper(*args, **kwargs):
+        if 'username' not in flask_session:
+            return redirect('login')
+        else:
+            return func(*args, **kwargs)
+    return func_wrapper
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -55,6 +64,7 @@ def page_not_found(e):
 def gconnect():
     """
     This function deals handling a Google OAuth2 response.
+    Source: https://github.com/udacity/ud330/blob/master/Lesson2/step5/project.py
     """
     # Ensure that the state anti-forgery variable matches.
     if request.args.get('state') != flask_session['state']:
@@ -78,7 +88,7 @@ def gconnect():
 
     # Check that the returned access token is valid using Google's API.
     access_token = credentials.access_token
-    url = Base_API_URI+('tokeninfo?access_token=%s'%access_token)
+    url = Base_GoogleAPI_URI+('tokeninfo?access_token=%s'%access_token)
     print(url)
     h = httplib2.Http()
     result = json.loads(h.request(url,'GET')[1])
@@ -112,7 +122,7 @@ def gconnect():
     flask_session['gplus_id'] = gplus_id
     
     # Retreive user info from credentials object.
-    userinfo_url = Base_API_URI+"userinfo"
+    userinfo_url = Base_GoogleAPI_URI+"userinfo"
     params = {'access_token' : credentials.access_token,
               'alt' : 'json'}
     answer = requests.get(userinfo_url, params=params)
@@ -134,6 +144,48 @@ def gconnect():
     flash("you are now logged in as %s" % flask_session['username'])
     return output
 
+
+@app.route('/gdisconnect')
+def gdisconnect():
+    """
+    This function will terminate a users google oauth session.
+    Source: 
+        https://github.com/udacity/ud330/blob/master/Lesson2/step6/project.py
+    """
+    
+    credentials = flask_session.get('credentials')
+    
+    # Generate a different response if the user is not logged in
+    if credentials is None:
+        response = make_response(json.dumps("Current user is not"+\
+                    " connected."), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    
+    # Send HTTP Get request to Google API to revoke current token.
+    url = 'https://accounts.google.com/o/oauth2/'+\
+          ('revoke?token=%s'%access_token)
+    result = httplib.Http().request(url,'GET')[0]
+    
+    # If successful, reset all of the user's credentials.
+    if result['status'] == '200':
+        del flask_session['credentials']
+        del flask_session['gplus_id']
+        del flask_session['username']
+        del flask_session['email']
+        del flask_session['picture']
+        
+        response = make_response(json.dumps("User successfully"+\
+                    "disconnected."), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    
+    else:
+        response = make_response(json.dumps("Failed to revoke user"+\
+                    "access token."), 400)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    
 
 @app.route('/login/')
 def userLogin():
@@ -210,7 +262,7 @@ def index():
     recentDishes = session.query(Dishes).order_by(Dishes.creation_time).limit(5).all()
     
     return render_template('index.html',
-                            cuisines = cuisineList,
+                            cuisines=cuisineList,
                             dishes=recentDishes)
 
 
