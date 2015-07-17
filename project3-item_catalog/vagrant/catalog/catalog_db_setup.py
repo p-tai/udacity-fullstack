@@ -7,7 +7,7 @@ import os
 import sys
 import datetime
 from sqlalchemy import Column, ForeignKey,\
-						Integer, String, DateTime, Binary
+                        Integer, String, DateTime, Binary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -17,9 +17,9 @@ Base = declarative_base()
 class Users(Base):
     __tablename__ = "users" 
     
-    email = Column(String(100), primary_key=True)
-    sha256_password = Column(String(256), nullable=False)
-    salt = Column(String(20))
+    id = Column(Integer, primary_key=True)
+    email = Column(String(100))
+    name = Column(String(100))
 
 
 class Cuisine(Base):
@@ -27,6 +27,15 @@ class Cuisine(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(63), nullable=False)
+
+
+    def serialize(self):
+        # Returns object data in serializable format
+        return {
+            'id' : self.id,
+            'name' : self.name,
+            'owner' : self.owner_id
+        }
 
 
 class Dishes(Base):
@@ -45,14 +54,14 @@ class Dishes(Base):
     
     @property
     def serialize(self):
-		# Returns object data in serializable format
-		return {
-			'id' : self.id,
-			'name' : self.name,
-			'description' : self.description,
-			'cuisine_id' : self.cuisine_id,
-			'owner' : self.owner_id
-		}
+        # Returns object data in serializable format
+        return {
+            'id' : self.id,
+            'name' : self.name,
+            'description' : self.description,
+            'cuisine_id' : self.cuisine_id,
+            'owner' : self.owner_id
+        }
 
 
 engine = create_engine('sqlite:///cuisines.db')

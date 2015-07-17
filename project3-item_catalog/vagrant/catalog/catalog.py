@@ -46,15 +46,7 @@ def correctCasing(str):
     strings = str.split(' ')
     strings = [s[0].upper()+s[1:].lower() for s in strings]
     return ' '.join(strings)
-        
 
-def require_login(func):
-    def func_wrapper(*args, **kwargs):
-        if 'username' not in flask_session:
-            return redirect('login')
-        else:
-            return func(*args, **kwargs)
-    return func_wrapper
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -132,6 +124,7 @@ def gconnect():
     flask_session['username'] = data['name']
     flask_session['picture'] = data['picture']
     flask_session['email'] = data['email']
+    createUser(data)
 
     # TODO: Template for successful login.
     output = ''
@@ -200,51 +193,27 @@ def userLogin():
 # TO DO
 @app.route("/logout")
 def userLogout():
+    gdisconnect()
     return redirect(url_for(index))
 
 
-@app.route('/createuser/', methods=['GET','POST'])
-def createUser():
+def createUser(user_data):
     """
     This function deals with the creation of new accounts.
     """
-    # Check if the HTTP request given is a POST or GET request.
-    if request.method == 'POST':
-        # If POST request, get the form data.
-        _email = request.form['e-mail']
-        _email = _email.encode('utf-8')
-        _password = request.form['password']
-        _password = _password.encode('utf-8')
-        # Check if given email is associated with an address.
-        user = session.query(Users).filter_by(email=_email)
-        try: 
-            user = user.one()
-            flash("A user with that e-mail address already exists.")
-            return render_template('createuser.html')
-        except NoResultFound, e:
-            pass
-        except OperationalError, e:
-            pass
-        # Get a salted hash of the password given.
-        _salt = urandom(16)
-        _salt = b64encode(_salt)
-        hashed = hashlib.sha256(_password+_salt).hexdigest()
-        hashed = hashed.encode('UTF-8')
-        # Create a new user and insert it into the database.
-        newUser = Users(
-            email = _email,
-            sha256_password = hashed,
-            salt = _salt)
-        session.add(newUser)
-        session.commit()
-        print newUser.email, newUser.sha256_password, _password
-        # Render the account page for this user.
-        flash("User account successfully created.")
-        return render_template('createuser.html')
-        return #redirect(url_for('myAccount', user=email))
-    else:
-        # If GET request, render a new user form.
-        return render_template('createuser.html')
+    _email = user_data['e-mail']
+    _email = _email.encode('utf-8')
+    user = session.query(Users).filter_by(email=_email)
+    try: 
+        user = user.one()
+        return
+    except NoResultFound, e:
+        pass
+    # Create a new user and insert it into the database.
+    newUser = Users(email = _email)
+    session.add(newUser)
+    session.commit()
+    return
 
 
 @app.route("/account")
@@ -271,6 +240,10 @@ def newCuisine():
     """
     Handles inserting a new cuisine type into the database.
     """
+    # Check if the user is currently logged in.
+    if 'username' not in flask_session:
+        return redirect('login')
+    
     # Check if the HTTP request given is a POST or GET request.
     print(request.method)
     if request.method == 'POST':
@@ -323,6 +296,10 @@ def deleteCuisine(c_id):
     """
     Deletes a cuisine associated with the cuisine-id.
     """
+    # Check if the user is currently logged in.
+    if 'username' not in flask_session:
+        return redirect('login')
+
     # Search for the cuisine-id.
     _cuisine = session.query(Cuisine).filter_by(id=c_id)
     try: 
@@ -336,12 +313,16 @@ def deleteCuisine(c_id):
         abort(404)
     return render_template('cuisinedelete.html', cuisine=_cuisine)
 
-# TO DO
+
 @app.route('/cuisine/<int:c_id>/new', methods=['GET','POST'])
 def newDish(c_id):
     """
     Add a new dish to the database, associated with a cuisine-id.
     """
+    # Check if the user is currently logged in.
+    if 'username' not in flask_session:
+        return redirect('login')
+
     # Search the database for the cuisine-id.
     _cuisine = session.query(Cuisine).filter_by(id=c_id)
     try: 
@@ -388,6 +369,10 @@ def editDish(c_id, d_id):
     """
     Edit the details of a dish in the database.
     """
+    # Check if the user is currently logged in.
+    if 'username' not in flask_session:
+        return redirect('login')
+
     # Search the databae for the given dish.
     _dish = session.query(Dishes).filter_by(id=d_id)
     try: 
@@ -447,6 +432,10 @@ def deleteDish(c_id, d_id):
     """
     This function will deal with deleting a dish from the database.
     """
+    # Check if the user is currently logged in.
+    if 'username' not in flask_session:
+        return redirect('login')
+
     # First check the dish exists.
     _dish = session.query(Dishes).filter_by(id=d_id)
     try: 
@@ -471,8 +460,7 @@ def deleteDish(c_id, d_id):
 
 
 @app.route('/cuisine/<int:c_id>/<int:d_id>/view')
-def viewDish(c_id, d_id):
-    
+def viewDish(c_id, d_id):    
     """
     This function will deal with listing a dish's details.
     """
