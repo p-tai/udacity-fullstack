@@ -64,6 +64,7 @@ def gconnect():
                     json.dumps('Invalid state parameter'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+    print("GConnect: State token valid.")
 
     # Upgrade the authorization code into a credentials object.
     code = request.data
@@ -77,20 +78,21 @@ def gconnect():
                     'the authorization code'), 401)
         response.headers['Content-Type'] = 'applica tion/json'
         return response
+    print("GConnect: Auth code upgrade into object.")
 
     # Check that the returned access token is valid using Google's API.
     access_token = credentials.access_token
     url = Base_GoogleAPI_URI+('tokeninfo?access_token=%s'%access_token)
-    print(url)
     h = httplib2.Http()
     result = json.loads(h.request(url,'GET')[1])
-    print(result)
 
     # If there is an error of some sort, return an error response code.
     if result.get('error') is not None:
         response = make_response(json.dumps('error'), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
+    print("GConnect: OAuth response received:")
+    print(result)
 
     # Check the given gplus_id matches the current user id.
     gplus_id = credentials.id_token['sub']
@@ -129,11 +131,9 @@ def gconnect():
     user = session.query(Users).filter_by(email=data['email'])
     try: 
         user = user.one()
-        return
     except NoResultFound, e:
         # If not, then add the user to the database
         createUser(data)
-    
 
     # TODO: Template for successful login.
     output = ''
@@ -208,20 +208,44 @@ def userLogout():
 
 def createUser(user_data):
     """
-    This function deals with the creation of new accounts.
+    This function deals with the insertion of new users into the db.
+    Returns the user_id of the object.
     """
-    # Get user e-mail from the input.
-    _email = user_data['e-mail']
-    _email = _email.encode('utf-8')
+    # Get user e-mail and name from input data to create a new user.
     
-    # Create a new user and insert it into the database.
-    
-    newUser = Users(email = _email)
+    newUser = Users(email=user_data['email'],
+                    name=user_data['name'])
+
+    # Insert new user into the database.
     session.add(newUser)
     session.commit()
-    return
+    user = session.query(Users).filter_by(
+        email=user_data['email']).one()
+    return user.id
+
+def getUserInfo(user_id):
+    """
+    Returns the user associated with the user_id.
+    """
+    try:
+        user = session.query(Users).filter_by(
+            id=user_id).one()
+        return user
+    except NoResultFound:
+        return None
 
 
+def getUserId(e_mail):
+    """
+    Returns the user id associated with the given e-mail address.
+    """
+    try:
+        user = session.query(Users).filter_by(
+            email=e_mail).one()
+        return user.id
+    except NoResultFound:
+        return None
+        
 @app.route("/account")
 def viewAccount():
     return render_template('account.html')
@@ -249,9 +273,8 @@ def newCuisine():
     # Check if the user is currently logged in.
     if 'username' not in flask_session:
         return redirect('login')
-    
+
     # Check if the HTTP request given is a POST or GET request.
-    print(request.method)
     if request.method == 'POST':
         # If a POST request, extract the form data.
         _name = request.form['name']
@@ -264,7 +287,8 @@ def newCuisine():
         except NoResultFound, e:
             pass
         # Create a new Cuisine tuple and add it to the Database.
-        newCuisine = Cuisine(name=_name)
+        newCuisine = Cuisine(name=_name,
+                             owner_id=getUserId(flask_session['email']))
         session.add(newCuisine)
         session.commit()
         flash(u'%s cuisine successfully added.' % _name)
@@ -310,14 +334,29 @@ def deleteCuisine(c_id):
     _cuisine = session.query(Cuisine).filter_by(id=c_id)
     try: 
         _cuisine = _cuisine.one()
-        if request.method == 'POST':
-            session.delete(_cuisine)
-            session.commit()
-            flash(u'\"%s\" deleted.' % _cuisine.name)
-            return redirect(url_for('index'))
     except NoResultFound, e:
         abort(404)
-    return render_template('cuisinedelete.html', cuisine=_cuisine)
+    
+    # Ensure the user trying to delete this item is the owner.
+    print(flask_session['email'])
+    print(getUserId(flask_session['email']))
+    print(_cuisine.owner_id)
+    print(getUserId(flask_session['email'])==_cuisine.owner_id)
+    print(getUserId(flask_session['email']) is _cuisine.owner_id)
+    print(int(getUserId(flask_session['email'])) == int(_cuisine.owner_id))
+    if int(getUserId(flask_session['email'])) != int(_cuisine.owner_id):
+        abort(401)
+    
+    # If get request, respond with a confirmation page.
+    if request.method == 'GET':
+        return render_template('cuisinedelete.html', cuisine=_cuisine)
+
+    # If a post request, delete the item from the db.
+    elif request.method == 'POST':
+        session.delete(_cuisine)
+        session.commit()
+        flash(u'\"%s\" deleted.' % _cuisine.name)
+        return redirect(url_for('index'))
 
 
 @app.route('/cuisine/<int:c_id>/new', methods=['GET','POST'])
@@ -356,7 +395,8 @@ def newDish(c_id):
                         description=_desc, 
                         cuisine=_cuisine,
                         cuisine_id=_cuisine.id,
-                        creation_time = datetime.datetime.utcnow)
+                        creation_time = datetime.datetime.utcnow,
+                        owner_id=flask_session['user_id'])
         session.add(newDish)
         session.commit()
         flash(u'%s dish successfully added.' % _name)
@@ -381,18 +421,23 @@ def editDish(c_id, d_id):
 
     # Search the databae for the given dish.
     _dish = session.query(Dishes).filter_by(id=d_id)
-    try: 
+    try:
         _dish = _dish.one()
-        # Also check that the cuisine-id is correct.
-        if _dish.cuisine.id != c_id:
-            abort(404)
+    # If no entry matching the dish-id found, render an error page.
     except NoResultFound, e:
-        # No entry matching the dish-id found, render an error page.
         abort(404)
-    
+
+    # Also check that the cuisine-id is correct.
+    if _dish.cuisine.id != c_id:
+        abort(404)
+
+    # Ensure the user trying to edit this item is the owner.
+    if int(getUserId(flask_session['email'])) != int(_cuisine.owner_id):
+        abort(401)
+
     # If found, check the HTTP request type.
     if request.method == 'POST':
-        
+                
         # If a POST request, extract the form data.
         _name = request.form['name']
         _desc = request.form['description']
@@ -426,8 +471,9 @@ def editDish(c_id, d_id):
         return render_template('dishedit.html', 
                                 cuisine_id=c_id,
                                 dish=_dish)
+
+    # If a GET request, just render a blank form.
     else:
-        # If a GET request, just render a blank form.
         return render_template('dishedit.html', 
                                 cuisine_id=c_id,
                                 dish=_dish)
@@ -446,23 +492,30 @@ def deleteDish(c_id, d_id):
     _dish = session.query(Dishes).filter_by(id=d_id)
     try: 
         _dish = _dish.one()
-        # Also check that the cuisine-id is correct.
-        if _dish.cuisine_id != c_id:
-            abort(404)
+    # No entry matching the dish-id found, render an error page.
     except NoResultFound, e:
-        # No entry matching the dish-id found, render an error page.
         abort(404)
-    if request.method == 'POST':
-        # Post request results in deleting the dish from the db.
+    
+    # Check that the cuisine-id is correct.
+    if _dish.cuisine_id != c_id:
+        abort(404)
+    
+    # Ensure the user trying to delete this item is the owner.
+    if int(getUserId(flask_session['email'])) != int(_cuisine.owner_id):
+        abort(401)
+    
+    # Get request results in a confirmation check.
+    if request.method == 'GET':
+        return render_template('dishdelete.html', 
+                                cuisine_id=_dish.cuisine_id,
+                                dish=_dish)
+
+    # Post request results in deleting the dish from the db.
+    elif request.method == 'POST':
         session.delete(_dish)
         session.commit()
         flash(u'\"%s\" deleted.' % _dish.name)
         return redirect(url_for('index'))
-    else:
-        # Get request results in a confirmation check.
-        return render_template('dishdelete.html', 
-                                cuisine_id=_dish.cuisine_id,
-                                dish=_dish)
 
 
 @app.route('/cuisine/<int:c_id>/<int:d_id>/view')
@@ -470,16 +523,19 @@ def viewDish(c_id, d_id):
     """
     This function will deal with listing a dish's details.
     """
-    # Search the databae for the given dish.
+    # Search the database for the given dish.
     _dish = session.query(Dishes).filter_by(id=d_id)
+
     try: 
         _dish = _dish.one()
-        # Also check that the cuisine-id is correct.
-        if _dish.cuisine.id != c_id:
-            abort(404)
+    # If no entry matching the dish-id found, render an error page.
     except NoResultFound, e:
-        # No entry matching the dish-id found, render an error page.
         abort(404)
+
+    # Also check that the cuisine-id is correct.    
+    if _dish.cuisine.id != c_id:
+        abort(404)
+
     return render_template("dishview.html", 
                             cuisine_id=c_id,
                             dish=_dish)

@@ -27,14 +27,16 @@ class Cuisine(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(63), nullable=False)
+    owner = relationship(Users)
+    owner_id = Column(String(100), ForeignKey('users.email'))
 
-
+    @property
     def serialize(self):
         # Returns object data in serializable format
         return {
-            'id' : self.id,
-            'name' : self.name,
-            'owner' : self.owner_id
+            'id':self.id,
+            'name':self.name,
+            'owner':self.owner_id
         }
 
 
@@ -56,11 +58,11 @@ class Dishes(Base):
     def serialize(self):
         # Returns object data in serializable format
         return {
-            'id' : self.id,
-            'name' : self.name,
-            'description' : self.description,
-            'cuisine_id' : self.cuisine_id,
-            'owner' : self.owner_id
+            'id':self.id,
+            'name':self.name,
+            'description':self.description,
+            'cuisine_id':self.cuisine_id,
+            'owner':self.owner_id
         }
 
 
