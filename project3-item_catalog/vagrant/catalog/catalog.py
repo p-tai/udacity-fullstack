@@ -112,7 +112,7 @@ def gconnect():
     # Store the user details into the session.
     flask_session['credentials'] = credentials
     flask_session['gplus_id'] = gplus_id
-    
+
     # Retreive user info from credentials object.
     userinfo_url = Base_GoogleAPI_URI+"userinfo"
     params = {'access_token' : credentials.access_token,
@@ -124,7 +124,16 @@ def gconnect():
     flask_session['username'] = data['name']
     flask_session['picture'] = data['picture']
     flask_session['email'] = data['email']
-    createUser(data)
+    
+    # Check if this user is already in our local database.
+    user = session.query(Users).filter_by(email=data['email'])
+    try: 
+        user = user.one()
+        return
+    except NoResultFound, e:
+        # If not, then add the user to the database
+        createUser(data)
+    
 
     # TODO: Template for successful login.
     output = ''
@@ -201,15 +210,12 @@ def createUser(user_data):
     """
     This function deals with the creation of new accounts.
     """
+    # Get user e-mail from the input.
     _email = user_data['e-mail']
     _email = _email.encode('utf-8')
-    user = session.query(Users).filter_by(email=_email)
-    try: 
-        user = user.one()
-        return
-    except NoResultFound, e:
-        pass
+    
     # Create a new user and insert it into the database.
+    
     newUser = Users(email = _email)
     session.add(newUser)
     session.commit()
