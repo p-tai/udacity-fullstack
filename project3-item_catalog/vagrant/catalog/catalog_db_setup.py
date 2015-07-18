@@ -7,16 +7,17 @@ import os
 import sys
 import datetime
 from sqlalchemy import Column, ForeignKey,\
-                        Integer, String, DateTime, Binary
+                            Integer, String, DateTime, BLOB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+
 class Users(Base):
-    __tablename__ = "users" 
-    
+    __tablename__ = "users"
+
     id = Column(Integer, primary_key=True)
     email = Column(String(100))
     name = Column(String(100))
@@ -32,11 +33,11 @@ class Cuisine(Base):
 
     @property
     def serialize(self):
-        # Returns object data in serializable format
+        # Returns object data in serializable format.
         return {
-            'id':self.id,
-            'name':self.name,
-            'owner':self.owner_id
+            'id': self.id,
+            'name': self.name,
+            'owner': self.owner_id
         }
 
 
@@ -52,17 +53,17 @@ class Dishes(Base):
     owner_id = Column(String(100), ForeignKey('users.email'))
     creation_time = Column(DateTime, default=datetime.datetime.utcnow)
     edit_time = Column(DateTime, default=datetime.datetime.utcnow)
-    image = Column(Binary)
-    
+    image = Column(BLOB)
+
     @property
     def serialize(self):
-        # Returns object data in serializable format
+        # Returns object data in serializable format.
         return {
-            'id':self.id,
-            'name':self.name,
-            'description':self.description,
-            'cuisine_id':self.cuisine_id,
-            'owner':self.owner_id
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'cuisine_id': self.cuisine_id,
+            'owner': self.owner_id
         }
 
 
