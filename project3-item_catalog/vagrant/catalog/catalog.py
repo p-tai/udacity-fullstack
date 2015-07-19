@@ -53,7 +53,7 @@ def page_not_found(err):
 def gconnect():
     """
     This function deals handling a Google OAuth2 response.
-    Source:
+    Based on Source From Full Stack Foundations course:
       https://github.com/udacity/ud330/blob/master/Lesson2/step5/project.py
     """
     # Ensure that the state anti-forgery variable matches.
@@ -75,6 +75,7 @@ def gconnect():
                                  'the authorization code'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+
 
     # Check that the returned access token is valid using Google's API.
     access_token = credentials.access_token
@@ -373,6 +374,7 @@ def newDish(c_id):
         _name = correctCasing(_name)
         _desc = request.form['description']
         _dish = session.query(Dishes).filter_by(name=_name)
+        _img = request.form['image']
         try:
             _dish = _dish.one()
             # Dish already exists in database, do not add to db.
@@ -386,8 +388,9 @@ def newDish(c_id):
                          description=_desc,
                          cuisine=_cuisine,
                          cuisine_id=_cuisine.id,
-                         creation_time=datetime.datetime.utcnow,
-                         owner_id=flask_session['user_id'])
+                         image=_img,
+                         creation_time=datetime.datetime.now(),
+                         owner_id=getUserId(flask_session['email']))
         session.add(newDish)
         session.commit()
         flash(u'%s dish successfully added.' % _name)
@@ -452,7 +455,7 @@ def editDish(c_id, d_id):
         _dish.name = _name
         if _desc != "":
             _dish.description = _desc
-        _dish.edit_time = datetime.datetime.utcnow
+        _dish.edit_time = datetime.datetime.now()
         session.commit()
 
         # Notify the front-end that the update was successful.
