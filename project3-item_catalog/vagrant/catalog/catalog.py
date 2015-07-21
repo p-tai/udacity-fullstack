@@ -18,7 +18,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from catalog_db_setup import Base, Cuisine, Dishes, Users
-from os import urandom
+from os import urandom, path, mkdir
 from base64 import b64encode
 
 app = Flask(__name__)
@@ -377,10 +377,7 @@ def newDish(c_id):
         _dish = session.query(Dishes).filter_by(name=_name)
         img = request.files['image']
         # should replace with a filler image
-        img_path = None
-        if img:
-            img_path = "static/"+secure_filename(img.filename)
-            img.save(img_path)
+        img_path = "static/img/default.jpg"
 
         try:
             _dish = _dish.one()
@@ -399,7 +396,22 @@ def newDish(c_id):
                          creation_time=datetime.datetime.now(),
                          owner_id=getUserId(flask_session['email']))
         session.add(newDish)
+        print("here")
+        session.flush()
+        if img:
+            img_path = ["static/img", str(newDish.cuisine_id), str(newDish.id)]
+            _path = img_path[0]
+            for subpath in img_path[1:]:
+                _path+="/"
+                _path+=subpath
+                if not path.exists(path.abspath(_path)):
+                    mkdir(path.abspath(_path))
+            img_path = _path + "/" + secure_filename(img.filename)
+            img.save(img_path)
+            newDish.image_path = img_path
+        print("there")
         session.commit()
+
         flash(u'%s dish successfully added.' % _name)
         return render_template('dishform.html',
                                cuisine_id=c_id,
@@ -419,7 +431,7 @@ def editDish(c_id, d_id):
     if 'username' not in flask_session:
         return redirect('login')
 
-    # Search the databae for the given dish.
+    # Search the database for the given dish.
     _dish = session.query(Dishes).filter_by(id=d_id)
     try:
         _dish = _dish.one()
@@ -463,6 +475,7 @@ def editDish(c_id, d_id):
         if _desc != "":
             _dish.description = _desc
         _dish.edit_time = datetime.datetime.now()
+        # TO DO: Image edit
         session.commit()
 
         # Notify the front-end that the update was successful.
