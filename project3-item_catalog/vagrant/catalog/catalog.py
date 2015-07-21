@@ -10,6 +10,7 @@ import datetime
 from flask import Flask, render_template, url_for, request,\
                   redirect, flash, jsonify, abort, make_response
 from flask import Session as login_session
+from werkzeug import secure_filename
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from sqlalchemy import create_engine
@@ -374,7 +375,13 @@ def newDish(c_id):
         _name = correctCasing(_name)
         _desc = request.form['description']
         _dish = session.query(Dishes).filter_by(name=_name)
-        _img = request.form['image']
+        img = request.files['image']
+        # should replace with a filler image
+        img_path = None
+        if img:
+            img_path = "static/"+secure_filename(img.filename)
+            img.save(img_path)
+
         try:
             _dish = _dish.one()
             # Dish already exists in database, do not add to db.
@@ -388,7 +395,7 @@ def newDish(c_id):
                          description=_desc,
                          cuisine=_cuisine,
                          cuisine_id=_cuisine.id,
-                         image=_img,
+                         image_path=img_path,
                          creation_time=datetime.datetime.now(),
                          owner_id=getUserId(flask_session['email']))
         session.add(newDish)
@@ -425,7 +432,7 @@ def editDish(c_id, d_id):
         abort(404)
 
     # Ensure the user trying to edit this item is the owner.
-    if int(getUserId(flask_session['email'])) != int(_cuisine.owner_id):
+    if int(getUserId(flask_session['email'])) != int(_dish.cuisine.owner_id):
         abort(401)
 
     # If found, check the HTTP request type.

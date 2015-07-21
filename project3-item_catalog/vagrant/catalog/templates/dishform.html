@@ -32,7 +32,7 @@
 </h2>
 <br>
 {% with messages = get_flashed_messages() %}
-{% if messages and cuisine_id%}
+{% if messages and cuisine_id and dish_id%}
 <div class='container'>
 	<div class='row'>
 		<div class='col-xs-8'>
@@ -53,7 +53,7 @@
 {% endwith %}
 
 <div class='container'>
-	<form action="{{ url_for('newDish', c_id=cuisine_id) }}" method='post'>
+	<form action="{{ url_for('newDish', c_id=cuisine_id) }}" method='post' enctype=multipart/form-data>
 	<div class='row'>
 		<div class='col-xs-2'>
 			<label for="name">Dish Name: </label>
@@ -75,7 +75,7 @@
 			<label for="image">Dish Image: </label>
 		</div>
 		<div class='col-xs-4'>
-			<input class='form-control' type="file" name="image">
+			<input class='form-control' type="file" name="image" accept="image/*">
 		</div>
 	</div>
 	<div class='row'>

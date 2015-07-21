@@ -53,7 +53,7 @@ class Dishes(Base):
     owner_id = Column(String(100), ForeignKey('users.email'))
     creation_time = Column(DateTime, default=datetime.datetime.utcnow)
     edit_time = Column(DateTime, default=datetime.datetime.utcnow)
-    image = Column(BLOB)
+    image_path = Column(String(100))
 
     @property
     def serialize(self):
