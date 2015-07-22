@@ -19,6 +19,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from catalog_db_setup import Base, Cuisine, Dishes, Users
 from os import urandom, path, mkdir
+from os import remove as os_remove
 from base64 import b64encode
 
 app = Flask(__name__)
@@ -396,7 +397,7 @@ def newDish(c_id):
                          creation_time=datetime.datetime.now(),
                          owner_id=getUserId(flask_session['email']))
         session.add(newDish)
-        print("here")
+
         session.flush()
         if img:
             img_path = ["static/img", str(newDish.cuisine_id), str(newDish.id)]
@@ -409,7 +410,7 @@ def newDish(c_id):
             img_path = _path + "/" + secure_filename(img.filename)
             img.save(img_path)
             newDish.image_path = img_path
-        print("there")
+
         session.commit()
 
         flash(u'%s dish successfully added.' % _name)
@@ -452,6 +453,7 @@ def editDish(c_id, d_id):
         # If a POST request, extract the form data.
         _name = request.form['name']
         _desc = request.form['description']
+        img = request.files['image']
 
         # Check the name was changed
         if _name == "":
@@ -474,8 +476,25 @@ def editDish(c_id, d_id):
         _dish.name = _name
         if _desc != "":
             _dish.description = _desc
+        if img:
+            img_path = ["static/img", str(_dish.cuisine_id), str(_dish.id)]
+            _path = img_path[0]
+            for subpath in img_path[1:]:
+                _path+="/"
+                _path+=subpath
+                if not path.exists(path.abspath(_path)):
+                    mkdir(path.abspath(_path))
+            img_path = _path + "/" + secure_filename(img.filename)
+            # Delete old image file, if it exists.
+            if path.isfile(img_path):
+                print("deleting old file")
+                os_remove(img_path)
+            # Save new image file.
+            print("saving new file")
+            img.save(img_path)
+            _dish.image_path = img_path
         _dish.edit_time = datetime.datetime.now()
-        # TO DO: Image edit
+
         session.commit()
 
         # Notify the front-end that the update was successful.
