@@ -493,6 +493,7 @@ def editDish(c_id, d_id):
             print("saving new file")
             img.save(img_path)
             _dish.image_path = img_path
+
         _dish.edit_time = datetime.datetime.now()
 
         session.commit()
@@ -592,5 +593,6 @@ if __name__ == "__main__":
     app.debug = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
     app.config["SECRET_KEY"] = "a_Secret_Key"
+    app.jinja_env.globals.update(path_check=path.isfile)
     flask_session = login_session()
     app.run(host='0.0.0.0', port=5000)

@@ -67,7 +67,11 @@
           <div class="row placeholders">
 			{% for dish in dishes %}
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img class="img-responsive" src="{{dish.image_path}}">
+			  {% if dish.image_path and path_check(dish.image_path)%}
+				<img class="img-responsive" src="{{dish.image_path}}">
+              {% else %}
+				<img class="img-responsive" src="static/img/default.jpg">
+              {% endif %}
               <h4>{{dish.cuisine.name}} <br> 
               <a href="{{url_for('viewDish', c_id=dish.cuisine_id, d_id=dish.id)}}"> {{dish.name}} </a></h4>
               <span class="text-muted">Created {{ dish.creation_time }} ago.</span>
