@@ -262,7 +262,8 @@ def index():
 
     return render_template('index.html',
                            cuisines=cuisineList,
-                           dishes=recentDishes)
+                           dishes=recentDishes,
+                           path_check=path.isfile)
 
 
 @app.route('/cuisine/new/', methods=['GET', 'POST'])
@@ -593,6 +594,5 @@ if __name__ == "__main__":
     app.debug = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
     app.config["SECRET_KEY"] = "a_Secret_Key"
-    app.jinja_env.globals.update(path_check=path.isfile)
     flask_session = login_session()
     app.run(host='0.0.0.0', port=5000)
