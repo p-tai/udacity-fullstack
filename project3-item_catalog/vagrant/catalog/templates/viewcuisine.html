@@ -1,113 +1,98 @@
 <!DOCTYPE html>
 <!-- saved from url=(0043)http://getbootstrap.com/examples/dashboard/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="http://getbootstrap.com/favicon.ico">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <title>Fullstack Project</title>
 
-<html lang="en">
-<head>
-  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-  <meta charset="utf-8">
-  <meta content="IE=edge" http-equiv="X-UA-Compatible">
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <meta content="" name="description">
-  <meta content="" name="author">
-  <link href="http://getbootstrap.com/favicon.ico" rel="icon">
-  <link href=
-  "//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel=
-  "stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <title>Fullstack Project</title><!-- Bootstrap core CSS -->
-  <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel=
-  "stylesheet"><!-- Custom styles for this template -->
-  <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel=
-  "stylesheet">
-  <script src="./dashboard_files/ie-emulation-modes-warning.js"></script>
-  <style type="text/css">
-</style>
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
+    <!-- Custom styles for this template -->
+    <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
+
+    <script src="./dashboard_files/ie-emulation-modes-warning.js"></script><style type="text/css"></style>
+	
+	
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-</head>
+	</head>
 
 <body>
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button class="navbar-toggle collapsed" data-target="#navbar"
-        data-toggle="collapse" type="button"><span class="sr-only">Toggle
-        navigation</span> <span class="icon-bar"></span> <span class=
-        "icon-bar"></span> <span class="icon-bar"></span></button> <a class=
-        "navbar-brand" href="http://getbootstrap.com/examples/dashboard/#">Item
-        Catalog</a>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="http://getbootstrap.com/examples/dashboard/#">Item Catalog</a>
+        </div>
       </div>
-    </div>
-  </nav>
-
-
-  <div class='container'>
-    <div class='row'>
-      <h3>{{cuisine.name}} Dishes:</h3>
-      
-      {% if not dishes %}
-      <div class='row'>
-		<div class='col-xs-8'>
-      
-			<strong>{{cuisine.name}} has no dishes yet.</strong>
+    </nav>
+    
+<div class='container'>
+	<div class='row'>
+		<h2>{{cuisine.name}} Dishes:</h2>
+	{% if not dishes %}
+		<div class='row'>
+			<h3>{{cuisine.name}} has no dishes yet.</h3>
 		</div>
-	  </div>
-      {% endif %}
-    </div>
-
-
-    <div class='row'>
-      <div class='col-xs-1'>
-        <a class="btn btn-primary btn-sm" href="{{url_for('newDish',"><i class=
-        'fa fa-plus-square'></i> Add a Dish</a>
-      </div>
-
-
-      <div class='col-xs-1'>
-        <a class="btn btn-danger btn-sm" href=
-        "{{url_for('deleteCuisine',"><i class='fa fa-trash-o'></i> Delete this
-        Cuisine</a>
-      </div>
-    </div>
-    <br>
-    <hr>
-    {% for d in dishes %}
-
-    <div class='row'>
-      <div class='col-xs-4'>
-        <p>{{d.cuisine.name}}: {{d.name}}</p>
-      </div>
-    </div>
-
-
-    <div class='row'>
-      <div class='col-xs-4'>
-        <p>{{d.description}}</p>
-      </div>
-    </div>
-
-
-    <div class='row'>
-      <div class='col-xs-1'>
-        <a class="btn btn-info btn-sm" href="{{url_for('editDish',"><i class=
-        'fa fa-edit'></i> Edit</a>
-      </div>
-
-
-      <div class='col-xs-1'>
-        <a class="btn btn-danger btn-sm" href=
-        "{{url_for('deleteDish',"><i class='fa fa-trash-o'></i> Delete</a>
-      </div>
-    </div>
-    <hr>
-    {% endfor %}
-  </div>
-  <!-- Bootstrap core JavaScript-->
-  <script src="./dashboard_files/jquery.min.js"></script> <script src="./dashboard_files/bootstrap.min.js"></script> <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="./dashboard_files/ie10-viewport-bug-workaround.js"></script>
+	{% endif %}
+	</div>
+	
+	<div class='row center-block'>
+		<div class='col-xs-4 center-block'>
+			<a href={{url_for('newDish', c_id=cuisine.id)}} 
+			class="btn btn-primary btn-lg"> <i class='fa fa-plus-square'></i> Add a Dish </a>
+		</div>
+		<div class='col-xs-4 center-block'>
+			<a href={{url_for('deleteCuisine', c_id=cuisine.id)}} 
+			class="btn btn-danger btn-lg"> <i class='fa fa-trash-o'></i> Delete this Cuisine </a>
+		</div>
+	</div>
+	
+	<br>
+	{% for d in dishes %}
+		<div class='row'>
+			<div class='col-xs-4'>
+				<p>{{d.cuisine.name}}: {{d.name}}</p>
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col-xs-4'>
+				<p>{{d.description}}</p>
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col-xs-1'>
+				<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
+				class="btn btn-info btn-sm"> <i class='fa fa-edit'></i> Edit </a>
+			</div>
+			<div class='col-xs-1'>
+				<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
+				class="btn btn-danger btn-sm"> <i class='fa fa-trash-o'></i> Delete </a>
+			</div>
+		</div>
+		<br>
+	{% endfor %}
+	
+</div>
 </body>
 </html>
+<!-- Bootstrap core JavaScript-->
+<script src="./dashboard_files/jquery.min.js"></script>
+<script src="./dashboard_files/bootstrap.min.js"</script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="./dashboard_files/ie10-viewport-bug-workaround.js"></script>

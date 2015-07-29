@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
+
   <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
-
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-  <script src="//apis.google.com/js/platform.js?onload=start"></script><!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+  <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+  <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
 
-
-  <title>
-  </title>
 </head>
 
-<body>
-  <!-- GOOGLE PLUS SIGN IN-->
+<body>  
 
+<!-- GOOGLE PLUS SIGN IN-->
+      <div id="signInButton">
+          <span class="g-signin"
+            data-scope="openid email"
+            data-clientid="490718969001-3mp5m70knk70on0nau1gm1t6uat9mim7.apps.googleusercontent.com"
+            data-redirecturi="postmessage"
+            data-accesstype="offline"
+            data-cookiepolicy="single_host_origin"
+            data-callback="signInCallback"
+            data-approvalprompt="force">
+          </span>
+      </div>
 
-  <div id="signInButton">
-    <span class="g-signin" data-accesstype="offline" data-approvalprompt=
-    "force" data-callback="signInCallback" data-clientid=
-    "490718969001-3mp5m70knk70on0nau1gm1t6uat9mim7.apps.googleusercontent.com"
-    data-cookiepolicy="single_host_origin" data-redirecturi="postmessage"
-    data-scope="openid email"></span>
-  </div>
+<div id="result"></div>
 
-
-  <div id="result">
-  </div>
-  <script>
+<script>
 function signInCallback(authResult) {
   if (authResult['code']) {
     // Hide the sign-in button now that the user is authorized
@@ -41,7 +41,7 @@ function signInCallback(authResult) {
       success: function(result) {
         // Handle or verify the server response if necessary.
         if (result) {
-          $('#result').html('Login Successful!<\/br>'+ result + '<\/br>Redirecting...')
+          $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
          setTimeout(function() {
           window.location.href = "/index";
          }, 4000);
@@ -54,6 +54,12 @@ function signInCallback(authResult) {
       }
       
   }); } }
-  </script> <!--END GOOGLE PLUS SIGN IN -->
-</body>
-</html>
+</script>
+
+
+
+<!--END GOOGLE PLUS SIGN IN -->
+
+  </body>
+
+  </html>
