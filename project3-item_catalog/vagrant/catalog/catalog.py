@@ -266,7 +266,7 @@ def index():
                            path_check=path.isfile)
 
 
-@app.route('/cuisine/new/', methods=['GET', 'POST'])
+@app.route('/cuisines/new/', methods=['GET', 'POST'])
 def newCuisine():
     """
     Handles inserting a new cuisine type into the database.
@@ -299,7 +299,7 @@ def newCuisine():
         return render_template("formcuisine.html")
 
 
-@app.route('/cuisine/<int:c_id>/view')
+@app.route('/cuisines/<int:c_id>/view')
 def viewCuisine(c_id):
     """
     Finds the associated cuisine_id and then rends a page
@@ -354,7 +354,7 @@ def deleteCuisine(c_id):
         return redirect(url_for('index'))
 
 
-@app.route('/cuisine/<int:c_id>/new', methods=['GET', 'POST'])
+@app.route('/cuisines/<int:c_id>/new', methods=['GET', 'POST'])
 def newDish(c_id):
     """
     Add a new dish to the database, associated with a cuisine-id.
@@ -424,7 +424,7 @@ def newDish(c_id):
                                cuisine_id=c_id)
 
 
-@app.route('/cuisine/<int:c_id>/<int:d_id>/edit', methods=['GET', 'POST'])
+@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/edit', methods=['GET', 'POST'])
 def editDish(c_id, d_id):
     """
     Edit the details of a dish in the database.
@@ -512,7 +512,7 @@ def editDish(c_id, d_id):
                                dish=_dish)
 
 
-@app.route('/cuisine/<int:c_id>/<int:d_id>/delete', methods=['GET', 'POST'])
+@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/delete', methods=['GET', 'POST'])
 def deleteDish(c_id, d_id):
     """
     This function will deal with deleting a dish from the database.
@@ -551,7 +551,7 @@ def deleteDish(c_id, d_id):
         return redirect(url_for('index'))
 
 
-@app.route('/cuisine/<int:c_id>/<int:d_id>/view')
+@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/view')
 def viewDish(c_id, d_id):
     """
     This function will deal with listing a dish's details.
@@ -574,7 +574,7 @@ def viewDish(c_id, d_id):
                            dish=_dish)
 
 
-@app.route('/cuisine/<int:c_id>/<int:d_id>/view/JSON')
+@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/view/JSON')
 def viewDishJSON(c_id, d_id):
     _dish = session.query(Dishes).filter_by(id=d_id)
     try:
