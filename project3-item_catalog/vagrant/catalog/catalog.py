@@ -13,7 +13,7 @@ from flask import Session as login_session
 from werkzeug import secure_filename
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
@@ -258,11 +258,18 @@ def index():
     """
     cuisineList = session.query(Cuisine).all()
     recentDishes = session.query(Dishes).order_by(
-                    Dishes.creation_time).limit(5).all()
+                    desc(Dishes.creation_time)).limit(3).all()
+    timeDeltas=[]
+    for dish in recentDishes:
+		time = datetime.datetime.now().replace(microsecond=0)
+		creation_time = dish.creation_time.replace(microsecond=0)
+		time_diff = time-creation_time
+		timeDeltas.append(time_diff)
 
     return render_template('index.html',
                            cuisines=cuisineList,
                            dishes=recentDishes,
+                           times=timeDeltas,
                            path_check=path.isfile)
 
 
