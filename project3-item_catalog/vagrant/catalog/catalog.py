@@ -581,7 +581,7 @@ def viewDish(c_id, d_id):
                            dish=_dish)
 
 
-@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/view/JSON')
+@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/JSON')
 def viewDishJSON(c_id, d_id):
     _dish = session.query(Dishes).filter_by(id=d_id)
     try:
