@@ -4,9 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
     <link rel="icon" href="http://getbootstrap.com/favicon.ico">
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <title>Fullstack Project</title>
@@ -19,16 +16,14 @@
 
     <script src="./dashboard_files/ie-emulation-modes-warning.js"></script><style type="text/css"></style>
 	
-	
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-	</head>
-
+</head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -47,30 +42,30 @@
       </div>
     </nav>
 <br><br>
-<div class='container'>
-	{% with d = dish %}
-		<div class='row'>
-			<div class='col-xs-8'>
-				{{d.cuisine.name}}: {{d.name}}
+	<div class='container'>
+		{% with d = dish %}
+			<div class='row'>
+				<div class='col-xs-8'>
+					{{d.cuisine.name}}: {{d.name}}
+				</div>
 			</div>
-		</div>
-		<div class='row'>
-			<div class='col-xs-8'>
-				{{d.description}}
+			<div class='row'>
+				<div class='col-xs-8'>
+					{{d.description}}
+				</div>
 			</div>
-		</div>
-		<div class='row'>
-			<div class='col-xs-1'>
-				<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
-				class="btn btn-primary btn-sm"><i class='fa fa-edit'></i> Edit </a>
+			<div class='row'>
+				<div class='col-xs-1'>
+					<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
+					class="btn btn-primary btn-sm"><i class='fa fa-edit'></i> Edit </a>
+				</div>
+				<div class='col-xs-1'>
+					<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
+					class="btn btn-danger btn-sm"><i class='fa fa-trash-o'></i> Delete </a>
+				</div>
 			</div>
-			<div class='col-xs-1'>
-				<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
-				class="btn btn-danger btn-sm"><i class='fa fa-trash-o'></i> Delete </a>
-			</div>
-		</div>
-	{% endwith %}
-</div>
+		{% endwith %}
+	</div>
 </body>
 </html>
 <!-- Bootstrap core JavaScript-->

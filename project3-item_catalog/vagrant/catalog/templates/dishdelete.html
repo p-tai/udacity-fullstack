@@ -4,10 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
     <link rel="icon" href="http://getbootstrap.com/favicon.ico">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
     <title>Fullstack Project</title>
 
@@ -26,27 +24,44 @@
     <![endif]-->
     </head>
 <body>
-
-<div class="container">
-    <div class="row">
-		<form action="{{ url_for('deleteDish', c_id = cuisine_id, d_id = dish.id) }}" method='post' >
-			<div class='row'>
-				<div class='col-xs-4'>
-					<label for="Form">Confirm Delete:</label>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="http://getbootstrap.com/examples/dashboard/#">Item Catalog</a>
+        </div>
+      </div>
+    </nav>
+    <br>
+	<div class="container">
+		<div class="row">
+			<form action="{{ url_for('deleteDish', c_id = cuisine_id, d_id = dish.id) }}" method='post' >
+				<div class='row'>
+					<div class='col-xs-4'>
+						<label for="Form"><h3><strong>Confirm Delete:</strong></h3></label>
+					</div>
 				</div>
-			</div>
-			<div class='row'>
-				<div class='col-xs-4'>
-					Are you sure you want to delete {{dish.name}}?
+				<div class='row'>
+					<div class='col-xs-4'>
+						Are you sure you want to delete {{dish.name}}?
+					</div>
 				</div>
-			</div>
-			<div class='row'>
-				<div class='col-xs-4'>
-					<button class='btn btn-danger btn-md'> <i class='fa fa-plus-trash-o'></i>  Delete Dish </button>
+				<br>
+				<div class='row'>
+					<div class='col-xs-4'>
+						<button class='btn btn-danger btn-md'> 
+							<i class='fa fa-trash-o'></i>  Delete Dish 
+						</button>
+					</div>
 				</div>
-		</form>
+			</form>
+		</div>
 	</div>
-</div>
 </body>
 </html>
 <!-- Bootstrap core JavaScript-->

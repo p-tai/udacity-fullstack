@@ -542,7 +542,7 @@ def deleteDish(c_id, d_id):
         abort(404)
 
     # Ensure the user trying to delete this item is the owner.
-    if int(getUserId(flask_session['email'])) != int(_cuisine.owner_id):
+    if int(getUserId(flask_session['email'])) != int(_dish.cuisine.owner_id):
         abort(401)
 
     # Get request results in a confirmation check.

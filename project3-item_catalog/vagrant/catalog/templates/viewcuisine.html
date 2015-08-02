@@ -4,9 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
     <link rel="icon" href="http://getbootstrap.com/favicon.ico">
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <title>Fullstack Project</title>
@@ -41,60 +38,68 @@
         </div>
       </div>
     </nav>
-    
-<div class='container'>
-	<div class='row'>
-		<h2>{{cuisine.name}} Dishes:</h2>
-	</div>
-		<div class='row center-block'>
-			<div class='col-xs-4 center-block'>
-				<a href={{url_for('newDish', c_id=cuisine.id)}} 
-				class="btn btn-primary btn-md"> <i class='fa fa-plus-square'></i> Add a Dish </a>
-			</div>
-			<div class='col-xs-4 center-block'>
-				<a href={{url_for('deleteCuisine', c_id=cuisine.id)}} 
-				class="btn btn-danger btn-md"> <i class='fa fa-trash-o'></i> Delete this Cuisine </a>
+    <br>
+	<div class='container'>
+		<div class='row'>
+			<div class='col-xs-8'>
+				<h3><strong>{{cuisine.name}} Dishes </strong></h3>
 			</div>
 		</div>
-	{% if not dishes %}
 		<br>
 		<div class='row'>
-			<h3>{{cuisine.name}} has no dishes yet.</h3>
+			<div class='col-xs-2'>
+				<a href={{url_for('newDish', c_id=cuisine.id)}} 
+					class="btn btn-primary btn-md"> <i class='fa fa-plus-square'></i> Add a Dish </a>
+			</div>
 		</div>
-	{% else %}
 		<br>
-		<div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>ID #</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Edit</th>
-                  <th>Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-				{% for d in dishes %}
-                <tr>
-                  <td>{{d.id}}</td>
-                  <td>{{d.name}}</td>
-                  <td>{{d.description}}</td>
-                  <td>				
-					<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
-					class="btn btn-info btn-sm"> <i class='fa fa-edit'></i> Edit </a></td>
-                  <td>				
-					<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
-					class="btn btn-danger btn-sm"> <i class='fa fa-trash-o'></i> Delete </a>
-				  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-        </div>
-    {% endif %}
-    </div>
-</div>
+		<div class='row'>
+			<div class='col-xs-2'>
+				<a href={{url_for('deleteCuisine', c_id=cuisine.id)}} 
+					class="btn btn-danger btn-md"> <i class='fa fa-trash-o'></i> Delete this Cuisine </a>
+			</div>
+		</div>
+		{% if not dishes %}
+		<br>
+		<div class='row'>
+			<div class='col-xs-4'>
+				<strong>This cuisine has no dishes yet!</strong>
+			</div>
+		</div>
+		{% else %}
+			<br>
+			<div class="table-responsive">
+				<table class="table table-striped">
+				  <thead>
+					<tr>
+					  <th>ID #</th>
+					  <th>Name</th>
+					  <th>Description</th>
+					  <th>Edit</th>
+					  <th>Delete</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					{% for d in dishes %}
+					<tr>
+					  <td>{{d.id}}</td>
+					  <td>{{d.name}}</td>
+					  <td>{{d.description}}</td>
+					  <td>				
+						<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
+						class="btn btn-info btn-sm"> <i class='fa fa-edit'></i> Edit </a></td>
+					  <td>				
+						<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
+						class="btn btn-danger btn-sm"> <i class='fa fa-trash-o'></i> Delete </a>
+					  </td>
+					</tr>
+					{% endfor %}
+				  </tbody>
+				</table>
+			</div>
+		{% endif %}
+		</div>
+	</div>
 </body>
 </html>
 <!-- Bootstrap core JavaScript-->
