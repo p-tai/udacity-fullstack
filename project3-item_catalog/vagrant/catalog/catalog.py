@@ -78,7 +78,6 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-
     # Check that the returned access token is valid using Google's API.
     access_token = credentials.access_token
     url = BASE_GOOGLEAPI_URI+('tokeninfo?access_token=%s' % access_token)
@@ -259,12 +258,12 @@ def index():
     cuisineList = session.query(Cuisine).all()
     recentDishes = session.query(Dishes).order_by(
                     desc(Dishes.creation_time)).limit(3).all()
-    timeDeltas=[]
+    timeDeltas = []
     for dish in recentDishes:
-		time = datetime.datetime.now().replace(microsecond=0)
-		creation_time = dish.creation_time.replace(microsecond=0)
-		time_diff = time-creation_time
-		timeDeltas.append(time_diff)
+        time = datetime.datetime.now().replace(microsecond=0)
+        creation_time = dish.creation_time.replace(microsecond=0)
+        time_diff = time-creation_time
+        timeDeltas.append(time_diff)
 
     return render_template('index.html',
                            cuisines=cuisineList,
@@ -411,8 +410,8 @@ def newDish(c_id):
             img_path = ["static/img", str(newDish.cuisine_id), str(newDish.id)]
             _path = img_path[0]
             for subpath in img_path[1:]:
-                _path+="/"
-                _path+=subpath
+                _path += "/"
+                _path += subpath
                 if not path.exists(path.abspath(_path)):
                     mkdir(path.abspath(_path))
             img_path = _path + "/" + secure_filename(img.filename)
@@ -431,7 +430,8 @@ def newDish(c_id):
                                cuisine_id=c_id)
 
 
-@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/edit', methods=['GET', 'POST'])
+@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/edit',
+           methods=['GET', 'POST'])
 def editDish(c_id, d_id):
     """
     Edit the details of a dish in the database.
@@ -488,8 +488,8 @@ def editDish(c_id, d_id):
             img_path = ["static/img", str(_dish.cuisine_id), str(_dish.id)]
             _path = img_path[0]
             for subpath in img_path[1:]:
-                _path+="/"
-                _path+=subpath
+                _path += "/"
+                _path += subpath
                 if not path.exists(path.abspath(_path)):
                     mkdir(path.abspath(_path))
             img_path = _path + "/" + secure_filename(img.filename)
@@ -519,7 +519,8 @@ def editDish(c_id, d_id):
                                dish=_dish)
 
 
-@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/delete', methods=['GET', 'POST'])
+@app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/delete',
+           methods=['GET', 'POST'])
 def deleteDish(c_id, d_id):
     """
     This function will deal with deleting a dish from the database.
