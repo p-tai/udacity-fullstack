@@ -75,6 +75,7 @@
 					  <th>ID #</th>
 					  <th>Name</th>
 					  <th>Description</th>
+					  <th>JSON</th>
 					  <th>Edit</th>
 					  <th>Delete</th>
 					</tr>
@@ -85,12 +86,16 @@
 					  <td>{{d.id}}</td>
 					  <td>{{d.name}}</td>
 					  <td>{{d.description}}</td>
+					  <td>
+						<a href={{url_for('viewDishJSON', c_id=d.cuisine_id, d_id=d.id)}} 
+						class="btn btn-primary btn-sm"> <i class='fa fa-file-text-o'></i></a>
+					  </td>
 					  <td>				
 						<a href={{url_for('editDish', c_id=d.cuisine_id, d_id=d.id)}} 
-						class="btn btn-info btn-sm"> <i class='fa fa-edit'></i> Edit </a></td>
-					  <td>				
+						class="btn btn-info btn-sm"> <i class='fa fa-edit'></i></a></td>
+					  <td>
 						<a href={{url_for('deleteDish', c_id=d.cuisine_id, d_id=d.id)}} 
-						class="btn btn-danger btn-sm"> <i class='fa fa-trash-o'></i> Delete </a>
+						class="btn btn-danger btn-sm"> <i class='fa fa-trash-o'></i></a>
 					  </td>
 					</tr>
 					{% endfor %}

@@ -63,7 +63,7 @@ class Dishes(Base):
             'name': self.name,
             'description': self.description,
             'cuisine_id': self.cuisine_id,
-            'owner': self.owner_id
+            'owner_id': self.owner_id
         }
 
 
