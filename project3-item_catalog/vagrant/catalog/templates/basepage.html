@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- Header based on http://getbootstrap.com/examples/dashboard/ template-->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="http://getbootstrap.com/favicon.ico">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Bootstrap core CSS -->
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
+    <script src={{url_for("static", filename="dashboard_files/ie-emulation-modes-warning.js")}}>
+      </script><style type="text/css"></style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <!-- Link to Font Awesome icons -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{url_for('index')}}">Item Catalog</a>
+        </div>
+        <div id="navbar">
+          <button class="btn btn-default navbar-right">
+            {% if user %}
+				<a href="{{url_for('userLogout')}}">Logout</a>
+            {% else %}
+				<a href="{{url_for('userLogin')}}">Login</a>
+			{% endif %}
+          </button>
+        </div>
+      </div>
+    </nav>
+    <br>
+	<div id="content">
+		{% block content %}
+		{% endblock %}
+	</div>
+
+</body>
+
+<!-- Bootstrap core JavaScript -->
+<script src={{url_for("static", filename="dashboard_files/jquery.min.js")}}></script>
+<script src={{url_for("static", filename="dashboard_files/bootstrap.min.js")}}></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src={{url_for("static", filename="dashboard_files/ie10-viewport-bug-workaround.js")}}></script>
+
+</html>

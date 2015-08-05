@@ -2,25 +2,25 @@
 Main python file that performs url routing and get/post responses.
 """
 
+import datetime
+import hashlib
 import httplib2
 import json
 import requests
-import hashlib
-import datetime
+from base64 import b64encode
+from catalog_db_setup import Base, Cuisine, Dishes, Users
 from flask import Flask, render_template, url_for, request,\
                   redirect, flash, jsonify, abort, make_response
 from flask import Session as login_session
-from werkzeug import secure_filename
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
+from os import urandom, path, mkdir
+from os import remove as os_remove
 from sqlalchemy import create_engine, desc
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
-from catalog_db_setup import Base, Cuisine, Dishes, Users
-from os import urandom, path, mkdir
-from os import remove as os_remove
-from base64 import b64encode
+from werkzeug import secure_filename
 
 app = Flask(__name__)
 
@@ -130,16 +130,12 @@ def gconnect():
         # If not, then add the user to the database
         createUser(data)
 
-    # TODO: Template for successful login.
-    output = ''
-    output += '<h1>Welcome, '
+    output = '<h1>Welcome, '
     output += flask_session['username']
-    output += '!</h1>'
-    output += '<img src="'
+    output += '!</h1><img src="'
     output += flask_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: '
     output += '150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;">'
-    flash("you are now logged in as %s" % flask_session['username'])
     return output
 
 
@@ -185,7 +181,7 @@ def gdisconnect():
         return response
 
 
-@app.route('/login/')
+@app.route('/login')
 def userLogin():
     """
     This function deals with user login.
