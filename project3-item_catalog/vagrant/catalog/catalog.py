@@ -158,8 +158,8 @@ def gdisconnect():
 
     # Send HTTP Get request to Google API to revoke current token.
     url = 'https://accounts.google.com/o/oauth2/' +\
-          ('revoke?token=%s' % access_token)
-    result = httplib.Http().request(url, 'GET')[0]
+          ('revoke?token=%s' % credentials.access_token)
+    result = httplib2.Http().request(url, 'GET')[0]
 
     # If successful, reset all of the user's credentials.
     if result['status'] == '200':
@@ -178,6 +178,7 @@ def gdisconnect():
         response = make_response(json.dumps("Failed to revoke user" +
                                             "access token."), 400)
         response.headers['Content-Type'] = 'application/json'
+        flask
         return response
 
 
@@ -195,7 +196,8 @@ def userLogin():
 @app.route("/logout")
 def userLogout():
     gdisconnect()
-    return redirect(url_for(index))
+    
+    return redirect(url_for('index'))
 
 
 def createUser(user_data):
@@ -251,6 +253,11 @@ def index():
     """
     Render a default landing page for these routes.
     """
+    if 'username' not in flask_session:
+        username = None
+    else:
+        username = flask_session['username']
+
     cuisineList = session.query(Cuisine).all()
     recentDishes = session.query(Dishes).order_by(
                     desc(Dishes.creation_time)).limit(3).all()
@@ -265,7 +272,8 @@ def index():
                            cuisines=cuisineList,
                            dishes=recentDishes,
                            times=timeDeltas,
-                           path_check=path.isfile)
+                           path_check=path.isfile,
+                           user=username)
 
 
 @app.route('/cuisines/new/', methods=['GET', 'POST'])
@@ -276,6 +284,7 @@ def newCuisine():
     # Check if the user is currently logged in.
     if 'username' not in flask_session:
         return redirect('login')
+    username = flask_session['username']
 
     # Check if the HTTP request given is a POST or GET request.
     if request.method == 'POST':
@@ -295,10 +304,12 @@ def newCuisine():
         session.add(newCuis)
         session.commit()
         flash(u'%s cuisine successfully added.' % _name)
-        return render_template("formcuisine.html", cu_id=newCuis.id)
+        return render_template("formcuisine.html",
+                               cu_id=newCuis.id,
+                               user=username)
     else:
         # If a GET request, just render a login form.
-        return render_template("formcuisine.html")
+        return render_template("formcuisine.html", user=username)
 
 
 @app.route('/cuisines/<int:c_id>/view')
@@ -332,6 +343,7 @@ def deleteCuisine(c_id):
     # Check if the user is currently logged in.
     if 'username' not in flask_session:
         return redirect('login')
+    username = flask_session['username']
 
     # Search for the cuisine-id.
     _cuisine = session.query(Cuisine).filter_by(id=c_id)
@@ -346,7 +358,9 @@ def deleteCuisine(c_id):
 
     # If get request, respond with a confirmation page.
     if request.method == 'GET':
-        return render_template('cuisinedelete.html', cuisine=_cuisine)
+        return render_template('cuisinedelete.html',
+                               cuisine=_cuisine,
+                               user=username)
 
     # If a post request, delete the item from the db.
     elif request.method == 'POST':
@@ -364,6 +378,7 @@ def newDish(c_id):
     # Check if the user is currently logged in.
     if 'username' not in flask_session:
         return redirect('login')
+    username = flask_session['username']
 
     # Search the database for the cuisine-id.
     _cuisine = session.query(Cuisine).filter_by(id=c_id)
@@ -389,7 +404,8 @@ def newDish(c_id):
             flash(u'%s has previously been submitted.' % _name)
             return render_template('dishform.html',
                                    cuisine_id=c_id,
-                                   dish_id=_dish.id)
+                                   dish_id=_dish.id,
+                                   user=username)
         except NoResultFound, e:
             pass
         newDish = Dishes(name=_name,
@@ -435,6 +451,7 @@ def editDish(c_id, d_id):
     # Check if the user is currently logged in.
     if 'username' not in flask_session:
         return redirect('login')
+    username = flask_session['username']
 
     # Search the database for the given dish.
     _dish = session.query(Dishes).filter_by(id=d_id)
@@ -473,7 +490,8 @@ def editDish(c_id, d_id):
                 flash(u'%s already exists. Edit failed.' % _name)
                 return render_template('dishedit.html',
                                        cuisine_id=c_id,
-                                       dish=temp)
+                                       dish=temp,
+                                       user=username)
             except NoResultFound, e:
                 pass
         # Update the dish's details in the database.
@@ -506,13 +524,15 @@ def editDish(c_id, d_id):
         flash(u'%s successfully updated.' % _name)
         return render_template('dishedit.html',
                                cuisine_id=c_id,
-                               dish=_dish)
+                               dish=_dish,
+                               user=username)
 
     # If a GET request, just render a blank form.
     else:
         return render_template('dishedit.html',
                                cuisine_id=c_id,
-                               dish=_dish)
+                               dish=_dish,
+                               user=username)
 
 
 @app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/delete',
@@ -524,6 +544,7 @@ def deleteDish(c_id, d_id):
     # Check if the user is currently logged in.
     if 'username' not in flask_session:
         return redirect('login')
+    username = flask_session['username']
 
     # First check the dish exists.
     _dish = session.query(Dishes).filter_by(id=d_id)
@@ -545,7 +566,8 @@ def deleteDish(c_id, d_id):
     if request.method == 'GET':
         return render_template('dishdelete.html',
                                cuisine_id=_dish.cuisine_id,
-                               dish=_dish)
+                               dish=_dish,
+                               user=username)
 
     # Post request results in deleting the dish from the db.
     elif request.method == 'POST':
@@ -560,6 +582,11 @@ def viewDish(c_id, d_id):
     """
     This function will deal with listing a dish's details.
     """
+    if 'username' not in flask_session:
+        username = None
+    else:
+        username = flask_session['username']
+    
     # Search the database for the given dish.
     _dish = session.query(Dishes).filter_by(id=d_id)
 
@@ -575,7 +602,8 @@ def viewDish(c_id, d_id):
 
     return render_template("dishview.html",
                            cuisine_id=c_id,
-                           dish=_dish)
+                           dish=_dish,
+                           user=username)
 
 
 @app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/JSON')
