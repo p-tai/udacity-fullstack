@@ -318,6 +318,10 @@ def viewCuisine(c_id):
     Finds the associated cuisine_id and then rends a page
     with all of the dishes associated with it.
     """
+    if 'username' not in flask_session:
+        return redirect('login')
+    username = flask_session['username']
+
     # Search for the cuisine-id.
     cuisine = session.query(Cuisine).filter_by(id=c_id)
     try:
@@ -332,7 +336,8 @@ def viewCuisine(c_id):
         dishes = None
     return render_template('viewcuisine.html',
                            dishes=dishes,
-                           cuisine=cuisine)
+                           cuisine=cuisine,
+                           user=username)
 
 
 @app.route('/cuisine/<int:c_id>/delete', methods=['GET', 'POST'])
