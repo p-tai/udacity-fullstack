@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-			<li class="active"><a href="#">Cuisines <span class="sr-only"></span></a></li>
+			<li class="active"><a href="">Cuisines <span class="sr-only"></span></a></li>
 			<li><a href="{{url_for('newCuisine')}}"> Add Cuisine </a></li>
 			<hr>
             {% for cuisine in cuisines %}
@@ -23,10 +23,10 @@
           <div class="row placeholders">
 			{% for dish in dishes %}
               <div class="col-xs-6 col-sm-3 placeholder">
-			  {% if dish.image_path and path_check(dish.image_path)%}
-				<img class="img-responsive" src="{{dish.image_path|safe}}">
+			  {% if dish.image_path and path_check(dish.image_path|safe) %}
+				<img class="img-thumbnail" src="{{dish.image_path|safe}}">
               {% else %}
-				<img class="img-responsive" src="{{ url_for('static/img', filename='default.jpg') }}">
+				<img class="img-thumbnail" src="{{ url_for('static/img', filename='default.jpg') }}">
               {% endif %}
                 <h4>{{dish.cuisine.name}} <br> 
                 <a href="{{url_for('viewDish', c_id=dish.cuisine_id, d_id=dish.id)}}"> {{dish.name}} </a></h4>

@@ -178,7 +178,6 @@ def gdisconnect():
         response = make_response(json.dumps("Failed to revoke user" +
                                             "access token."), 400)
         response.headers['Content-Type'] = 'application/json'
-        flask
         return response
 
 
@@ -187,7 +186,7 @@ def userLogin():
     """
     This function deals with user login.
     """
-    state = ''.join(b64encode(urandom(32)).decode('utf-8'))
+    state = generateRandomString()
     flask_session['state'] = state
 
     return render_template('login.html', STATE=state)
@@ -196,9 +195,11 @@ def userLogin():
 @app.route("/logout")
 def userLogout():
     gdisconnect()
-    
     return redirect(url_for('index'))
 
+
+def generateRandomString():
+    return ''.join(b64encode(urandom(32)).decode('utf-8'))
 
 def createUser(user_data):
     """
@@ -319,8 +320,9 @@ def viewCuisine(c_id):
     with all of the dishes associated with it.
     """
     if 'username' not in flask_session:
-        return redirect('login')
-    username = flask_session['username']
+        username = None
+    else:
+        username = flask_session['username']
 
     # Search for the cuisine-id.
     cuisine = session.query(Cuisine).filter_by(id=c_id)
@@ -413,12 +415,13 @@ def newDish(c_id):
                                    user=username)
         except NoResultFound, e:
             pass
+        now = datetime.datetime.now().replace(microsecond=0)
         newDish = Dishes(name=_name,
                          description=_desc,
                          cuisine=_cuisine,
                          cuisine_id=_cuisine.id,
                          image_path=img_path,
-                         creation_time=datetime.datetime.now(),
+                         creation_time=now,
                          owner_id=getUserId(flask_session['email']))
         session.add(newDish)
 
@@ -608,7 +611,8 @@ def viewDish(c_id, d_id):
     return render_template("dishview.html",
                            cuisine_id=c_id,
                            dish=_dish,
-                           user=username)
+                           user=username,
+                           path_check=path.isfile)
 
 
 @app.route('/cuisines/<int:c_id>/dishes/<int:d_id>/JSON')

@@ -37,7 +37,7 @@ class Cuisine(Base):
         return {
             'id': self.id,
             'name': self.name,
-            'owner': self.owner_id
+            'owner_id': self.owner_id
         }
 
 
@@ -62,6 +62,7 @@ class Dishes(Base):
             'id': self.id,
             'name': self.name,
             'description': self.description,
+            'creation_time': self.creation_time,
             'cuisine_id': self.cuisine_id,
             'owner_id': self.owner_id
         }

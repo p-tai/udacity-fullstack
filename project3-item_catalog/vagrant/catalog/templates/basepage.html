@@ -31,13 +31,16 @@
           <a class="navbar-brand" href="{{url_for('index')}}">Item Catalog</a>
         </div>
         <div id="navbar">
-          <button class="btn btn-default navbar-right">
-            {% if user %}
-				<a href="{{url_for('userLogout')}}">Logout</a>
-            {% else %}
-				<a href="{{url_for('userLogin')}}">Login</a>
-			{% endif %}
-          </button>
+          <div class="nav navbar-nav navbar-right">
+              <li>
+                {% if user %}
+                    <a href="{{url_for('userLogout')}}">Logout</a>
+                {% else %}
+                    <a href="{{url_for('userLogin')}}">Login</a>
+                {% endif %}
+                </button>
+              </li>
+            </div>
         </div>
       </div>
     </nav>
