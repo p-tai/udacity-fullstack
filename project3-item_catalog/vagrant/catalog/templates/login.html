@@ -6,20 +6,31 @@
 {% block content %}
     <div class="container-fluid">
       <div class="row">
-          <strong> Please login to create, delete, or edit entries. </strong>
-          <div id="signInButton">
-            <span class="g-signin"
-                data-scope="openid email"
-                data-clientid="490718969001-3mp5m70knk70on0nau1gm1t6uat9mim7.apps.googleusercontent.com"
-                data-redirecturi="postmessage"
-                data-accesstype="offline"
-                data-cookiepolicy="single_host_origin"
-                data-callback="signInCallback"
-                data-approvalprompt="force">
-            </span>
+		  <div class="col-md-6">
+			<strong> Please login to create, delete, or edit entries. </strong>
+		  </div>
+	  </div>
+	  <br>
+	  <div class="row">
+		  <div class="col-md-3">
+			  <div id="signInButton">
+				<span class="g-signin"
+					data-scope="openid email"
+					data-clientid="490718969001-3mp5m70knk70on0nau1gm1t6uat9mim7.apps.googleusercontent.com"
+					data-redirecturi="postmessage"
+					data-accesstype="offline"
+					data-cookiepolicy="single_host_origin"
+					data-callback="signInCallback"
+					data-approvalprompt="force">
+				</span>
+			  </div>
           </div>
-        </div>
-        <div id="result"></div>
+      </div>
+      <br>
+      <div class="row row-centered">
+		<div class='col-md-3'></div>
+		<div class='col-md-6' id="result"></div>
+	  <div>
     </div>
     
 
