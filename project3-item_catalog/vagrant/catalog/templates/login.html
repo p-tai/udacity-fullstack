@@ -7,7 +7,7 @@
     <div class="container-fluid">
       <div class="row">
 		  <div class="col-md-6">
-			<strong> Please login to create, delete, or edit entries. </strong>
+			<strong> Please login to add, edit, or delete entries. </strong>
 		  </div>
 	  </div>
 	  <br>
@@ -27,11 +27,10 @@
           </div>
       </div>
       <br>
-      <div class="row row-centered">
-		<div class='col-md-3'></div>
-		<div class='col-md-6' id="result"></div>
-	  <div>
-    </div>
+	  <div class="row row-centered">
+		<div class='col-md-4 col-md-offset-3' id="result"> </div>
+	  </div>
+	</div>
     
 
     <script>
@@ -49,18 +48,21 @@
           success: function(result) {
             // Handle or verify the server response if necessary.
             if (result) {
-              $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+              $('#result').html(
+				'Login Successful!</br>'+ result + '</br>Redirecting...'
+			  )
              setTimeout(function() {
               window.location.href = '{{NEXT}}';
              }, 3000);
               
-          } else if (authResult['error']) {
-        console.log('There was an error: ' + authResult['error']);
-      } else {
-            $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-             }
+			} else if (authResult['error']) {
+				console.log('There was an error: ' + authResult['error']);
+			} else {
+				$('#result').html('Failed to make a server-side call. Check your configuration and console.');
+            }
           }
-          
-      }); } }
+        });
+      }
+     }
     </script>
 {% endblock %}

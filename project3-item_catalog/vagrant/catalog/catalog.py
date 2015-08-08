@@ -191,12 +191,11 @@ def gconnect():
         # If not, then add the user to the database
         createUser(data)
 
-    output = '<h1>Welcome, '
+    output = "<h1>Welcome "
     output += flask_session['username']
-    output += '!</h1><img src="'
+    output += '!</h1><img class="img-responsive img-rounded" src="'
     output += flask_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: '
-    output += '150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;">'
+    output += '">'
     return output
 
 
@@ -244,8 +243,11 @@ def gdisconnect():
 @app.route('/login')
 def userLogin():
     """
-    This function calls user login and .
+    This function calls user login.
     """
+    # Check if the user is already logged in.
+    if 'username' in flask_session:
+        return redirect(url_for('index'))
     state = generateRandomString()
     flask_session['state'] = state
     next = None
