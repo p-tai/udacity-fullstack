@@ -28,7 +28,7 @@
     {% endwith %}
 
     <div class='container'>
-        <form action="{{ url_for('newCuisine') }}" method='post'>
+        <form action="{{ url_for('newCuisine', state=nonce) }}" method='post'>
         <div class='row'>
             <div class='col-xs-4'>
                 <label for="name">Please enter the Cuisine Name: </label>
