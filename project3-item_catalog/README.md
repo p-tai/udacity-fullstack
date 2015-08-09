@@ -26,14 +26,19 @@ Usage steps:
 	Navigate to the fullstack-nanodegree-vm/vagrant/
 		cd fullstack-nanodegree-vm/vagrant
 		
-	Start up the viritual machine using Vagrant
+	Boot the viritual machine using Vagrant
 		vagrant up
 	
 	Connect to the virtual machine using Vagrant
 		vagrant ssh
 	
-	Navigate to the sync directory, then the catalog directory
+	Navigate to the sync directory/catalog directory
 		cd /vagrant/catalog
-		
-	TODO
-		
+	
+    Download client_secret.json from the following url and place it in the catalog directory
+        https://www.dropbox.com/s/lc7yfjga42vdn6d/client_secret.json?dl=0
+
+	Run catalog.py
+        python catalog.py
+    
+    Connect to the application through a browser at 127.0.0.1:5000

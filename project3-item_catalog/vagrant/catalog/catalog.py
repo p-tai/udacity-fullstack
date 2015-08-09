@@ -50,7 +50,7 @@ def correctCasing(words):
 
 def login_required(f):
     """
-    Decorator function with login check and state-variable generation.
+    Decorator function with login check and redirect.
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -62,6 +62,9 @@ def login_required(f):
 
 
 def generateRandomString():
+    """
+    Utility function to generate a 32 character randomized utf-8 string.
+    """
     return ''.join(b64encode(urandom(32)).decode('utf-8'))
 
 
@@ -71,7 +74,6 @@ def createUser(user_data):
     Returns the user_id of the object.
     """
     # Get user e-mail and name from input data to create a new user.
-
     newUser = Users(email=user_data['email'],
                     name=user_data['name'])
 
@@ -109,6 +111,9 @@ def getUserId(e_mail):
 
 @app.errorhandler(404)
 def page_not_found(err):
+    """
+    Route for a custom http 404 error page.
+    """
     return render_template('404.html'), 404
 
 
@@ -177,8 +182,8 @@ def gconnect():
               'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
 
+    # Retreive and store the resulting user data.
     data = answer.json()
-
     flask_session['username'] = data['name']
     flask_session['picture'] = data['picture']
     flask_session['email'] = data['email']
@@ -191,6 +196,7 @@ def gconnect():
         # If not, then add the user to the database
         createUser(data)
 
+    # Generate an output div and image for the login confirmation.
     output = "<h1>Welcome "
     output += flask_session['username']
     output += '!</h1><img class="img-responsive img-rounded" src="'
@@ -243,7 +249,7 @@ def gdisconnect():
 @app.route('/login')
 def userLogin():
     """
-    This function calls user login.
+    Renders template for login and calls the login function.
     """
     # Check if the user is already logged in.
     if 'username' in flask_session:
@@ -261,6 +267,9 @@ def userLogin():
 
 @app.route("/logout")
 def userLogout():
+    """
+    Redirects user to primary landing page and calls disconnect function.
+    """
     gdisconnect()
     return redirect(url_for('index'))
 
@@ -271,14 +280,18 @@ def index():
     """
     Render a default landing page for these routes.
     """
+    # Check if user is logged in for template rendering.
     if 'username' not in flask_session:
         username = None
     else:
         username = flask_session['username']
 
+    # Query for 3 most recently inserted dishes.
     cuisineList = session.query(Cuisine).all()
     recentDishes = session.query(Dishes).order_by(
                     desc(Dishes.creation_time)).limit(3).all()
+
+    # Calculate different in time from creation time to now.
     timeDeltas = []
     for dish in recentDishes:
         time = datetime.datetime.now().replace(microsecond=0)
@@ -336,6 +349,7 @@ def viewCuisine(c_id):
     Finds the associated cuisine_id and then rends a page
     with all of the dishes associated with it.
     """
+    # Check if user is logged in for template rendering.
     if 'username' not in flask_session:
         username = None
     else:
@@ -415,7 +429,6 @@ def newDish(c_id):
         _desc = request.form['description']
         _dish = session.query(Dishes).filter_by(name=_name)
         img = request.files['image']
-        # should replace with a filler image
         img_path = "static/img/default.jpg"
 
         try:
@@ -428,6 +441,8 @@ def newDish(c_id):
                                    user=username)
         except NoResultFound, e:
             pass
+
+        # Insert a new dish into the database.
         now = datetime.datetime.now().replace(microsecond=0)
         newDish = Dishes(name=_name,
                          description=_desc,
@@ -437,8 +452,9 @@ def newDish(c_id):
                          creation_time=now,
                          owner_id=getUserId(flask_session['email']))
         session.add(newDish)
-
         session.flush()
+
+        # Create the directories for image storage and save the image file.
         if img:
             img_path = ["static/img", str(newDish.cuisine_id), str(newDish.id)]
             _path = img_path[0]
@@ -603,7 +619,7 @@ def viewDish(c_id, d_id):
         username = None
     else:
         username = flask_session['username']
-    
+
     # Search the database for the given dish.
     _dish = session.query(Dishes).filter_by(id=d_id)
 
