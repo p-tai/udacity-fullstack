@@ -604,6 +604,7 @@ def deleteDish(c_id, d_id):
 
     # Post request results in deleting the dish from the db.
     elif request.method == 'POST':
+        os_remove(_dish.image_path) 
         session.delete(_dish)
         session.commit()
         flash(u'\"%s\" deleted.' % _dish.name)

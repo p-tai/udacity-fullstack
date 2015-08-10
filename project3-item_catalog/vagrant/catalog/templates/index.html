@@ -14,19 +14,23 @@
             {% for cuisine in cuisines %}
 				<li><a href="{{url_for('viewCuisine', c_id=cuisine.id)}}"> {{cuisine.name}} </a></li>
 			{% else %}
-				<li> No cuisines so far.</li>
+                <li><a href="{{url_for('newCuisine')}}"> No Cuisines Yet </a></li>
 			{% endfor %}
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Recently Added Dishes</h1>
+          {% if not dishes %}
+            <h1 class="page-header">No Dishes Yet</h1>
+          {% else %}
+            <h1 class="page-header">Recently Added Dishes</h1>
+          {% endif %}
           <div class="row placeholders">
 			{% for dish in dishes %}
               <div class="col-xs-6 col-sm-3 placeholder">
 			  {% if dish.image_path and path_check(dish.image_path|safe) %}
 				<img class="img-thumbnail" src="{{dish.image_path|safe}}">
               {% else %}
-				<img class="img-thumbnail" src="{{ url_for('static/img', filename='default.jpg') }}">
+				<img class="img-thumbnail" src="{{ url_for('static', filename='img/default.jpg') }}">
               {% endif %}
                 <h4>{{dish.cuisine.name}} <br> 
                 <a href="{{url_for('viewDish', c_id=dish.cuisine_id, d_id=dish.id)}}"> {{dish.name}} </a></h4>
