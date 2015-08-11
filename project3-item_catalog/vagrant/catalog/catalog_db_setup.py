@@ -7,7 +7,7 @@ import os
 import sys
 import datetime
 from sqlalchemy import Column, ForeignKey,\
-                            Integer, String, DateTime, BLOB
+                       Integer, String, DateTime, BLOB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -16,6 +16,12 @@ Base = declarative_base()
 
 
 class Users(Base):
+    """
+    User table
+    id:     primary key, auto-incremented int
+    email:  email of the user
+    name:   name of the user
+    """
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
@@ -23,8 +29,15 @@ class Users(Base):
     name = Column(String(100))
 
 
-class Cuisine(Base):
-    __tablename__ = "cuisine"
+class Cuisines(Base):
+    """
+    Cuisines table
+    id:         primary key, auto-incremented int
+    name:       name of the cuisine
+    owner:      owner entity that created this cuisine
+    owner_id:   id of the owner associated with this cuisine
+    """
+    __tablename__ = "cuisines"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(63), nullable=False)
@@ -42,13 +55,26 @@ class Cuisine(Base):
 
 
 class Dishes(Base):
+    """
+    Dishes table
+    id:             primary key, auto-incremented int
+    name:           name of the dish
+    description:    short string describing the dish
+    cuisine:        cuisine entity associated with this dish
+    cuisine_id:     id of the cuisine associated with this dish
+    owner:          owner entity that created this cuisine
+    owner_id:       id of the owner associated with this cuisine
+    creation_time:  the time a row was inserted
+    edit_time:      the time a row was last edited
+    image_path:     location of the image stored locally
+    """
     __tablename__ = "dishes"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     description = Column(String(250))
-    cuisine = relationship(Cuisine)
-    cuisine_id = Column(Integer, ForeignKey('cuisine.id'))
+    cuisine = relationship(Cuisines)
+    cuisine_id = Column(Integer, ForeignKey('cuisines.id'))
     owner = relationship(Users)
     owner_id = Column(String(100), ForeignKey('users.email'))
     creation_time = Column(DateTime, default=datetime.datetime.utcnow)

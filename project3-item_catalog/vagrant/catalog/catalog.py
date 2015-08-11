@@ -8,7 +8,7 @@ import httplib2
 import json
 import requests
 from base64 import b64encode
-from catalog_db_setup import Base, Cuisine, Dishes, Users
+from catalog_db_setup import Base, Cuisines, Dishes, Users
 from flask import Flask, render_template, url_for, request,\
                   redirect, flash, jsonify, abort, make_response
 from flask import Session as login_session
@@ -26,21 +26,21 @@ from werkzeug import secure_filename
 
 app = Flask(__name__)
 
-CLIENT_ID = json.loads(
-    open('client_secret.json', 'r').read())['web']['client_id']
-
-BASE_GOOGLEAPI_URI = "https://www.googleapis.com/oauth2/v1/"
-
 engine = create_engine('sqlite:///cuisines.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+CLIENT_ID = json.loads(
+    open('client_secret.json', 'r').read())['web']['client_id']
+
+BASE_GOOGLEAPI_URI = "https://www.googleapis.com/oauth2/v1/"
+
 
 def correctCasing(words):
     """
-    Forces given str to a standard Capitalization where
+    Formats given str to a standard capitalization where
     all the first letters of a word are capitalized.
     """
     strings = words.split(' ')
@@ -99,7 +99,7 @@ def getUserInfo(user_id):
 
 def getUserId(e_mail):
     """
-    Returns the user id associated with the given e-mail address.
+    Returns the user_id associated with the given e-mail address.
     """
     try:
         user = session.query(Users).filter_by(
@@ -237,13 +237,11 @@ def gdisconnect():
         response = make_response(json.dumps("User successfully" +
                                             "disconnected."), 200)
         response.headers['Content-Type'] = 'application/json'
-        return response
-
     else:
         response = make_response(json.dumps("Failed to revoke user" +
                                             "access token."), 400)
         response.headers['Content-Type'] = 'application/json'
-        return response
+    return response
 
 
 @app.route('/login')
@@ -268,7 +266,7 @@ def userLogin():
 @app.route("/logout")
 def userLogout():
     """
-    Redirects user to primary landing page and calls disconnect function.
+    Calls disconnect function and redirects user to primary landing page.
     """
     gdisconnect()
     return redirect(url_for('index'))
@@ -278,7 +276,7 @@ def userLogout():
 @app.route('/index')
 def index():
     """
-    Render a default landing page for these routes.
+    Render a default landing page.
     """
     # Check if user is logged in for template rendering.
     if 'username' not in flask_session:
@@ -287,7 +285,7 @@ def index():
         username = flask_session['username']
 
     # Query for 3 most recently inserted dishes.
-    cuisineList = session.query(Cuisine).all()
+    cuisineList = session.query(Cuisines).all()
     recentDishes = session.query(Dishes).order_by(
                     desc(Dishes.creation_time)).limit(3).all()
 
@@ -319,27 +317,27 @@ def newCuisine():
         # If a POST request, extract the form data.
         _name = request.form['name']
         _name = correctCasing(_name)
-        cuisine = session.query(Cuisine).filter_by(name=_name)
+        cuisine = session.query(Cuisines).filter_by(name=_name)
         try:
             cuisine = cuisine.one()
             flash(u'\"%s\" not added. Cuisine already exists.' % _name)
-            return render_template("formcuisine.html",
+            return render_template("cuisineform.html",
                                    cu_id=cuisine.id,
                                    user=username)
         except NoResultFound, e:
             pass
         # Create a new Cuisine tuple and add it to the Database.
-        newCuis = Cuisine(name=_name,
+        newCuis = Cuisines(name=_name,
                           owner_id=getUserId(flask_session['email']))
         session.add(newCuis)
         session.commit()
         flash(u'%s cuisine successfully added.' % _name)
-        return render_template("formcuisine.html",
+        return render_template("cuisineform.html",
                                cu_id=newCuis.id,
                                user=username)
     else:
         # If a GET request, just render a blank form
-        return render_template("formcuisine.html",
+        return render_template("cuisineform.html",
                                user=username)
 
 
@@ -356,7 +354,7 @@ def viewCuisine(c_id):
         username = flask_session['username']
 
     # Search for the cuisine-id.
-    cuisine = session.query(Cuisine).filter_by(id=c_id)
+    cuisine = session.query(Cuisines).filter_by(id=c_id)
     try:
         cuisine = cuisine.one()
     except NoResultFound, e:
@@ -367,7 +365,7 @@ def viewCuisine(c_id):
         dishes = dishes.all()
     except NoResultFound, e:
         dishes = None
-    return render_template('viewcuisine.html',
+    return render_template('cuisineview.html',
                            dishes=dishes,
                            cuisine=cuisine,
                            user=username)
@@ -382,7 +380,7 @@ def deleteCuisine(c_id):
     username = flask_session['username']
 
     # Search for the cuisine-id.
-    _cuisine = session.query(Cuisine).filter_by(id=c_id)
+    _cuisine = session.query(Cuisines).filter_by(id=c_id)
     try:
         _cuisine = _cuisine.one()
     except NoResultFound, e:
@@ -415,7 +413,7 @@ def newDish(c_id):
     username = flask_session['username']
 
     # Search the database for the cuisine-id.
-    _cuisine = session.query(Cuisine).filter_by(id=c_id)
+    _cuisine = session.query(Cuisines).filter_by(id=c_id)
     try:
         _cuisine = _cuisine.one()
     except NoResultFound, e:

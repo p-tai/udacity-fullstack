@@ -1,12 +1,12 @@
 {% extends "basepage.html" %}
-{% block title %}Fullstack Project - Item Catalog{% endblock %}
+{% block title %}Add a Dish{% endblock %}
 {% block head %}
     {{ super() }}
 {% endblock %}
 {% block content %}
     {% with messages = get_flashed_messages() %}
     {% if messages and cuisine_id and dish_id%}
-    <div class="container-fluid">
+    <div class="container">
         <div class='row'>
             <div class='col-xs-8'>
                 <strong> {{messages[0]}} </strong>
@@ -20,7 +20,6 @@
             </div>
         </div>
     </div>
-    </p>
     <br>
     {% endif %}
     {% endwith %}

@@ -1,5 +1,5 @@
 {% extends "basepage.html" %}
-{% block title %}Fullstack Project - Item Catalog{% endblock %}
+{% block title %}Login{% endblock %}
 {% block head %}
     {{ super() }}
 {% endblock %}
@@ -54,7 +54,6 @@
              setTimeout(function() {
               window.location.href = '{{NEXT}}';
              }, 3000);
-              
 			} else if (authResult['error']) {
 				console.log('There was an error: ' + authResult['error']);
 			} else {
