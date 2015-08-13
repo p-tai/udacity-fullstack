@@ -42,7 +42,7 @@ class Cuisines(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(63), nullable=False)
     owner = relationship(Users)
-    owner_id = Column(String(100), ForeignKey('users.email'))
+    owner_id = Column(Integer, ForeignKey('users.id'))
 
     @property
     def serialize(self):
@@ -73,10 +73,12 @@ class Dishes(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     description = Column(String(250))
-    cuisine = relationship(Cuisines)
+    cuisine = relationship(Cuisines,
+                           cascade="all, delete-orphan",
+                           single_parent=True)
     cuisine_id = Column(Integer, ForeignKey('cuisines.id'))
     owner = relationship(Users)
-    owner_id = Column(String(100), ForeignKey('users.email'))
+    owner_id = Column(Integer, ForeignKey('users.id'))
     creation_time = Column(DateTime, default=datetime.datetime.utcnow)
     edit_time = Column(DateTime, default=datetime.datetime.utcnow)
     image_path = Column(String(100))

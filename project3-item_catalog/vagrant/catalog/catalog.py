@@ -7,15 +7,15 @@ import hashlib
 import httplib2
 import json
 import requests
-from base64 import b64encode
 from catalog_db_setup import Base, Cuisines, Dishes, Users
+from catalog_helpers import *
 from flask import Flask, render_template, url_for, request,\
                   redirect, flash, jsonify, abort, make_response
 from flask import Session as login_session
 from functools import wraps
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
-from os import urandom, path, mkdir
+from os import path, mkdir
 from os import remove as os_remove
 from sqlalchemy import create_engine, desc
 from sqlalchemy.exc import OperationalError
@@ -38,16 +38,6 @@ CLIENT_ID = json.loads(
 BASE_GOOGLEAPI_URI = "https://www.googleapis.com/oauth2/v1/"
 
 
-def correctCasing(words):
-    """
-    Formats given str to a standard capitalization where
-    all the first letters of a word are capitalized.
-    """
-    strings = words.split(' ')
-    strings = [s[0].upper()+s[1:].lower() for s in strings]
-    return ' '.join(strings)
-
-
 def login_required(f):
     """
     Decorator function with login check and redirect.
@@ -59,13 +49,6 @@ def login_required(f):
         else:
             return f(*args, **kwargs)
     return decorated_function
-
-
-def generateRandomString():
-    """
-    Utility function to generate a 32 character randomized utf-8 string.
-    """
-    return ''.join(b64encode(urandom(32)).decode('utf-8'))
 
 
 def createUser(user_data):
@@ -331,10 +314,7 @@ def newCuisine():
                           owner_id=getUserId(flask_session['email']))
         session.add(newCuis)
         session.commit()
-        flash(u'%s cuisine successfully added.' % _name)
-        return render_template("cuisineform.html",
-                               cu_id=newCuis.id,
-                               user=username)
+        return redirect(url_for('index'))
     else:
         # If a GET request, just render a blank form
         return render_template("cuisineform.html",
