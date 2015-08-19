@@ -255,6 +255,47 @@ class ConferenceApi(remote.Service):
         )
 
 
+    @endpoints.method(message_types.VoidMessage, ConferenceForm, path='createSession',
+            http_method='POST', name='createSession')
+    def createSession(self, request):
+        """Create new conference session."""
+        # TODO
+        return
+
+
+    @endpoints.method(message_types.VoidMessage, ConferenceForms,
+            path='getConferenceSessions',
+            http_method='POST', name='getConferenceSessions')
+    def getConferenceSessions(self, request):
+        """Given a conference, return all sessions"""
+        # TODO
+        return
+
+    
+    @endpoints.method(message_types.VoidMessage, ConferenceForms,
+            path='getConferenceSessionsByType',
+            http_method='POST', name='getConferenceSessionsByType')
+    def getConferenceSessionsByType(self, request):
+        """
+        Given a conference, return all sessions of 
+        specified type (eg lecture, keynote, workshop)
+        """
+        # TODO
+        return
+
+
+    @endpoints.method(message_types.VoidMessage, ConferenceForms,
+            path='getSessionsBySpeaker',
+            http_method='POST', name='getSessionsBySpeaker')
+    def getSessionsBySpeaker(self, request):
+        """
+        Given a speaker, return all sessions given 
+        by this particular speaker, across all conferences
+        """
+        # TODO
+        return
+
+
     def _getQuery(self, request):
         """Return formatted query from the submitted filters."""
         q = Conference.query()
