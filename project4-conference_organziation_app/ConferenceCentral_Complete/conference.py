@@ -7,10 +7,11 @@ conference.py -- Udacity conference server-side Python App Engine API;
 $Id: conference.py,v 1.25 2014/05/24 23:42:19 wesc Exp wesc $
 
 created by wesc on 2014 apr 21
+further extended by p-tai on 2015 aug
 
 """
 
-__author__ = 'wesc+api@google.com (Wesley Chun)'
+# __author__ = 'wesc+api@google.com (Wesley Chun)'
 
 
 from datetime import datetime
@@ -260,7 +261,7 @@ class ConferenceApi(remote.Service):
     def createSession(self, request):
         """Create new conference session."""
         # TODO
-        return
+        pass
 
 
     @endpoints.method(message_types.VoidMessage, ConferenceForms,
@@ -269,7 +270,7 @@ class ConferenceApi(remote.Service):
     def getConferenceSessions(self, request):
         """Given a conference, return all sessions"""
         # TODO
-        return
+        pass
 
     
     @endpoints.method(message_types.VoidMessage, ConferenceForms,
@@ -281,7 +282,7 @@ class ConferenceApi(remote.Service):
         specified type (eg lecture, keynote, workshop)
         """
         # TODO
-        return
+        pass
 
 
     @endpoints.method(message_types.VoidMessage, ConferenceForms,
@@ -293,7 +294,7 @@ class ConferenceApi(remote.Service):
         by this particular speaker, across all conferences
         """
         # TODO
-        return
+        pass
 
 
     def _getQuery(self, request):
