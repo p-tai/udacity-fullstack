@@ -10,8 +10,11 @@ Description:
     similar to the restaurant menu app discussed in the python web-apps course.
 
 Project files:
-	catalog.py
-	TODO
+	catalog.py: contains all app-routes and functions
+	catalog_db_setup.py: contains the table definitions
+	catalog_helpers.py: helpers to generate random strings correct casing
+	templates/: contains all of the .html templates used by render_template in catalog.py
+	static/: contains a few javascript and image files used by templates
 
 Usage steps:
 	If not installed, install Vagrant and VirtualBox.
