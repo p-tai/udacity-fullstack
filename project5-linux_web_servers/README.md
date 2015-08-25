@@ -7,3 +7,9 @@ student
 Password:
 udacity
 
+TODO:
+Disable remote login of root user
+Force SSH authentication
+Set SSH to non-default port
+
+
